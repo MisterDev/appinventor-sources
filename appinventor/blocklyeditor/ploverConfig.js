@@ -90,8 +90,8 @@
     "./src/language_switch.js",
     "./src/folder.js",
     "./src/folder_svg.js",
-    "./src/mini-workspace.js",
-    "./src/mini-workspaces.js",
+    "./src/miniworkspace.js",
+    "./src/minibubble.js",
 
 
     //blocks files
