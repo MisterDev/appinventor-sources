@@ -91,7 +91,7 @@
     "./src/folder.js",
     "./src/folder_svg.js",
     "./src/miniworkspace.js",
-    "./src/minibubble.js",
+    "./src/folderIcon.js",
 
 
     //blocks files
