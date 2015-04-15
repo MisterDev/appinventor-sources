@@ -390,6 +390,10 @@ Blockly.Block.prototype.isBadBlock = function() {
  */
 Blockly.Block.prototype.dispose = function(healStack, animate,
                                            dontRemoveFromWorkspace) {
+  if (this.type == "folder") {
+    this.miniworkspace.dispose();
+  }
+
   // Switch off rerendering.
   this.rendered = false;
   this.unplug(healStack);
@@ -603,7 +607,6 @@ Blockly.Block.prototype.getHeightWidthNeil = function() {
  * @private
  */
 Blockly.Block.prototype.onMouseDown_ = function(e) {
-  console.log(e);
   if (this.isInFlyout) {
     return;
   }
