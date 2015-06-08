@@ -45,17 +45,21 @@ Blockly.Xml.workspaceToDom = function(workspace) {
   var xml = goog.dom.createDom('xml');
   var blocks = workspace.getTopBlocks(true);
   for (var i = 0, block; block = blocks[i]; i++) {
-    var element = Blockly.Xml.blockToDom_(block);
-      if (block.type == "folder") {
-          var folder = Blockly.Xml.workspaceToDom(block.miniworkspace);
-          for (var x = 0, b; b = folder.childNodes[x];){
-              element.appendChild(b);
-          }
-      }
-    var xy = block.getRelativeToSurfaceXY();
-    element.setAttribute('x', Blockly.RTL ? width - xy.x : xy.x);
-    element.setAttribute('y', xy.y);
-    xml.appendChild(element);
+    // [Devid] Generate the DOM only if the block is in the given workspace
+    // because getTopBlocks() returns also miniworkspaces's topBlocks_
+    if(block.workspace == workspace){
+      var element = Blockly.Xml.blockToDom_(block);
+        if (block.type == "folder") {
+            var folder = Blockly.Xml.workspaceToDom(block.miniworkspace);
+            for (var x = 0, b; b = folder.childNodes[x];){
+                element.appendChild(b);
+            }
+        }
+      var xy = block.getRelativeToSurfaceXY();
+      element.setAttribute('x', Blockly.RTL ? width - xy.x : xy.x);
+      element.setAttribute('y', xy.y);
+      xml.appendChild(element);
+    }
   }
   return xml;
 };
