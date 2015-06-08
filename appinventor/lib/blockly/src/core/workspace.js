@@ -241,6 +241,14 @@ Blockly.Workspace.prototype.getTopBlocks = function(ordered) {
   var start = new Date().getTime(); //*** lyn instrumentation
   // Copy the topBlocks_ list.
   var blocks = [].concat(this.topBlocks_);
+  
+  // [Devid] Retrieve the topBlocks_ of the folder's miniworkspaces  
+  for(var b in blocks){
+    if(blocks[b].type == "folder"){
+      blocks = blocks.concat(blocks[b].miniworkspace.topBlocks_);
+    }
+  }
+
   if (ordered && blocks.length > 1) {
     var offset = Math.sin(Blockly.Workspace.SCAN_ANGLE / 180 * Math.PI);
     if (Blockly.RTL) {
