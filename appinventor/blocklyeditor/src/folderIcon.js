@@ -93,8 +93,10 @@ Blockly.FolderIcon.prototype.setVisible = function(visible) {
         return;
     }
     if (visible) {
-        // Create the bubble.
-        this.block_.miniworkspace.renderWorkspace(this.block_, this.iconX_, this.iconY_);
+        // Create the bubble.        
+        var width = this.block_.getHeightWidth().width;
+        var position = this.block_.getRelativeToSurfaceXY();
+        this.block_.miniworkspace.renderWorkspace(this.block_, position.x + width + 10, position.y);
     } else {
         this.block_.miniworkspace.xml = Blockly.Xml.workspaceToDom(this.block_.miniworkspace);
         this.block_.miniworkspace.disposeWorkspace();
