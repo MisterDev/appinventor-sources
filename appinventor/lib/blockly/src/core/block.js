@@ -502,7 +502,10 @@ Blockly.Block.prototype.getRelativeToSurfaceXY = function() {
       x += xy.x;
       y += xy.y;
       element = element.parentNode;
-    } while (element && element != this.workspace.getCanvas());
+    // [Devid] getCanvas() on collapsed miniworkspaces returns null 
+    // causing blocks to move when reloading the page
+    } while (element && (element != this.workspace.getCanvas() && 
+      (this.workspace == Blockly.mainWorkspace || this.workspace.getCanvas() != null)));
   }
   return {x: x, y: y};
 };
