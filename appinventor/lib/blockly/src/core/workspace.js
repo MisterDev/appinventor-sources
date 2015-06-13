@@ -245,7 +245,7 @@ Blockly.Workspace.prototype.getTopBlocks = function(ordered) {
   // [Devid] Retrieve the topBlocks_ of the folder's miniworkspaces  
   for(var b in blocks){
     if(blocks[b].type == "folder"){
-      blocks = blocks.concat(blocks[b].miniworkspace.topBlocks_);
+      blocks = blocks.concat(blocks[b].miniworkspace.getTopBlocks());
     }
   }
 

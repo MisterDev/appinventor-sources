@@ -247,6 +247,9 @@ Blockly.Xml.domToWorkspace = function(workspace, xml) {
                       folderXML.appendChild(xmlChild.children[0]);
                   }
                   block.miniworkspace.xml = folderXML;
+                  // [Devid] populates the topBlocks_ of every miniworkspace
+                  block.folderIcon.setVisible(true);
+                  block.folderIcon.setVisible(false);
               }
             var blockX = parseInt(xmlChild.getAttribute('x'), 10);
             var blockY = parseInt(xmlChild.getAttribute('y'), 10);
