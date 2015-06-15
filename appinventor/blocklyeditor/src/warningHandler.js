@@ -455,7 +455,7 @@ Blockly.WarningHandler.checkEmptySockets = function(){
   }
 }
 
-//Check if the block is a root block that isn't a procedure definition, variable declaration, or event
+//Check if the block is a root block that isn't a procedure definition, variable declaration, event or folder
 Blockly.WarningHandler.checkBlockAtRoot = function(){
   var rootBlock = this.getRootBlock();
   if(this == rootBlock && this.blockType != "event" && this.type !="global_declaration" &&
