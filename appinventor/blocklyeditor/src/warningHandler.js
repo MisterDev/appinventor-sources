@@ -459,7 +459,7 @@ Blockly.WarningHandler.checkEmptySockets = function(){
 Blockly.WarningHandler.checkBlockAtRoot = function(){
   var rootBlock = this.getRootBlock();
   if(this == rootBlock && this.blockType != "event" && this.type !="global_declaration" &&
-     this.type != "procedures_defnoreturn" && this.type != "procedures_defreturn"){
+     this.type != "procedures_defnoreturn" && this.type != "procedures_defreturn" && this.type != "folder"){
     if(Blockly.WarningHandler.showWarningsToggle) {
       var warningMessage = Blockly.Msg.WRONG_TYPE_BLOCK_WARINGS;
       if(this.warning){
