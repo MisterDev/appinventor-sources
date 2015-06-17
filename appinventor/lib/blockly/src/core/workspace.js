@@ -532,7 +532,14 @@ Blockly.Workspace.prototype.moveIntoFolder = function (block) {
     for (var i = 0; i < block.inputList.length; i++) {
       var c = block.inputList[i];
       if (c.connection) {
-        changeConnection(c.connection);
+        // [Devid] if the block is expanded then we call changeconnection
+        // otherwise we have to set dbList_ to point to the connectionDBList
+        // of the new workspace or the block 
+        if(c.connection.inDB_){
+          changeConnection(c.connection);
+        }else{
+          c.connection.dbList_ = newWorkspace.connectionDBList;
+        }
       }
     }
   }
@@ -597,7 +604,14 @@ Blockly.Workspace.prototype.moveOutOfFolder = function (block) {
     for (var i = 0; i < block.inputList.length; i++) {
       var c = block.inputList[i];
       if (c.connection) {
-        changeConnection(c.connection);
+        // [Devid] if the block is expanded then we call changeconnection
+        // otherwise we have to set dbList_ to point to the connectionDBList
+        // of the new workspace or the block 
+        if(c.connection.inDB_){
+          changeConnection(c.connection);
+        }else{
+          c.connection.dbList_ = newWorkspace.connectionDBList;
+        }
       }
     }
   }
