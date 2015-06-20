@@ -100,6 +100,8 @@ Blockly.FolderIcon.prototype.setVisible = function(visible) {
     } else {
         this.block_.miniworkspace.xml = Blockly.Xml.workspaceToDom(this.block_.miniworkspace);
         this.block_.miniworkspace.disposeWorkspace();
+        // Needed when expanding a folder that has been collapsed opened
+        this.iconMark_.innerHTML = "+";
         //this.dispose();
         //// Dispose of the bubble.
         //this.svgDialog_ = null;
