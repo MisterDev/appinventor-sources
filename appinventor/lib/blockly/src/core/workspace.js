@@ -518,45 +518,41 @@ Blockly.Workspace.prototype.moveIntoFolder = function (block) {
   block.svg_.getRootElement().setAttribute('transform',
       'translate(' + x + ', ' + y + ')');
 
-  // remove, change x & y, add
-  if (block.outputConnection) {
-    changeConnection(block.outputConnection);
-  }
-  if (block.nextConnection) {
-    changeConnection(block.nextConnection);
-  }
-  if (block.previousConnection) {
-    changeConnection(block.previousConnection);
-  }
-  if (block.inputList) {
-    for (var i = 0; i < block.inputList.length; i++) {
-      var c = block.inputList[i];
-      if (c.connection) {
-        // [Devid] if the block is expanded then we call changeconnection
-        // otherwise we have to set dbList_ to point to the connectionDBList
-        // of the new workspace or the block 
-        if(c.connection.inDB_){
+  moveConnections(block);
+
+  // [Devid] Recursively moves the connections of this block and 
+  // his descendant between workspaces
+  function moveConnections(currBlock) {
+    // remove, change x & y, add
+    if (currBlock.outputConnection) {
+      changeConnection(currBlock.outputConnection);
+    }
+    if (currBlock.nextConnection) {
+      changeConnection(currBlock.nextConnection);
+    }
+    if (currBlock.previousConnection) {
+      changeConnection(currBlock.previousConnection);
+    }
+    if (block.inputList) {
+      for (var i = 0; i < currBlock.inputList.length; i++) {
+        var c = currBlock.inputList[i];
+        if (c.connection) {
           changeConnection(c.connection);
-        }else{
-          c.connection.dbList_ = newWorkspace.connectionDBList;
         }
       }
-    }
+    } 
+    for(var x = 0; x < currBlock.childBlocks_.length; x++){
+      moveConnections(currBlock.childBlocks_[x]);
+    }   
   }
 
   function changeConnection (connect) {
-    oldWorkspace.connectionDBList[connect.type].removeConnection_(connect);
+    if(connect.inDB_){
+      oldWorkspace.connectionDBList[connect.type].removeConnection_(connect);
+    }
     connect.x_ += dx;
     connect.y_ += dy;
     newWorkspace.connectionDBList[connect.type].addConnection_(connect);
-    if (connect.targetConnection) {
-      var tconnect = connect.targetConnection;
-      oldWorkspace.connectionDBList[tconnect.type].removeConnection_(tconnect);
-      tconnect.x_ += dx;
-      tconnect.y_ += dy;
-      newWorkspace.connectionDBList[tconnect.type].addConnection_(tconnect);
-      tconnect.dbList_ = newWorkspace.connectionDBList;
-    }
     connect.dbList_ = newWorkspace.connectionDBList;
   }
 
@@ -589,46 +585,42 @@ Blockly.Workspace.prototype.moveOutOfFolder = function (block) {
   block.svg_.getRootElement().setAttribute('transform',
       'translate(' + x + ', ' + y + ')');
   block.isInFolder = false;
+  
+  moveConnections(block);
 
-  // Change the old workspace and new workspace's connectionDBList
-  if (block.outputConnection) {
-    changeConnection(block.outputConnection);
-  }
-  if (block.nextConnection) {
-    changeConnection(block.nextConnection);
-  }
-  if (block.previousConnection) {
-    changeConnection(block.previousConnection);
-  }
-  if (block.inputList) {
-    for (var i = 0; i < block.inputList.length; i++) {
-      var c = block.inputList[i];
-      if (c.connection) {
-        // [Devid] if the block is expanded then we call changeconnection
-        // otherwise we have to set dbList_ to point to the connectionDBList
-        // of the new workspace or the block 
-        if(c.connection.inDB_){
+  // [Devid] Recursively moves the connections of this block and 
+  // his descendant between workspaces
+  function moveConnections(currBlock) {
+    // remove, change x & y, add
+    if (currBlock.outputConnection) {
+      changeConnection(currBlock.outputConnection);
+    }
+    if (currBlock.nextConnection) {
+      changeConnection(currBlock.nextConnection);
+    }
+    if (currBlock.previousConnection) {
+      changeConnection(currBlock.previousConnection);
+    }
+    if (block.inputList) {
+      for (var i = 0; i < currBlock.inputList.length; i++) {
+        var c = currBlock.inputList[i];
+        if (c.connection) {
           changeConnection(c.connection);
-        }else{
-          c.connection.dbList_ = newWorkspace.connectionDBList;
         }
       }
-    }
+    } 
+    for(var x = 0; x < currBlock.childBlocks_.length; x++){
+      moveConnections(currBlock.childBlocks_[x]);
+    }   
   }
 
   function changeConnection (connect) {
-    oldWorkspace.connectionDBList[connect.type].removeConnection_(connect);
+    if(connect.inDB_){
+      oldWorkspace.connectionDBList[connect.type].removeConnection_(connect);
+    }
     connect.x_ += dx;
     connect.y_ += dy;
     newWorkspace.connectionDBList[connect.type].addConnection_(connect);
-    if (connect.targetConnection) {
-      var tconnect = connect.targetConnection;
-      oldWorkspace.connectionDBList[tconnect.type].removeConnection_(tconnect);
-      tconnect.x_ += dx;
-      tconnect.y_ += dy;
-      newWorkspace.connectionDBList[tconnect.type].addConnection_(tconnect);
-      tconnect.dbList_ = newWorkspace.connectionDBList;
-    }
     connect.dbList_ = newWorkspace.connectionDBList;
   }
 
