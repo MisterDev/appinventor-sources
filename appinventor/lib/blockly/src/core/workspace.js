@@ -570,7 +570,9 @@ Blockly.Workspace.prototype.moveOutOfFolder = function (block) {
   var newWorkspace = this;
   var blockRelativeToWXY = block.getRelativeToSurfaceXY();
   var miniWorkspaceOrigin = Blockly.getRelativeXY_(oldWorkspace.svgGroup_);
-  oldWorkspace.removeTopBlock(block);
+  if(!block.parentBlock_){
+    oldWorkspace.removeTopBlock(block);
+  }
   newWorkspace.addTopBlock(block);
   //surgically removes all svg associated with block from old workspace canvas
   var svgGroup = goog.dom.removeNode(block.svg_.svgGroup_);
