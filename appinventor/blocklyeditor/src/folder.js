@@ -293,3 +293,54 @@ Blockly.Folder.prototype.promote = function() {
         throw 'Folder not present in ALL_FOLDERS.';
     }
 };
+
+/**
+ * Ensure two identically-named folders don't exist.
+ * @param {string} name Proposed folder name.
+ * @param {!Blockly.Block} block Block to disambiguate.
+ * @return {string} Non-colliding name.
+ */
+Blockly.Folder.findLegalName = function(name, block) {
+  if (block.isInFlyout) {
+    // Flyouts can have multiple folders called 'folder'.
+    return name;
+  }
+  name = name.replace(/\s+/g, '');
+  while (!Blockly.Folder.isLegalName(name, block.workspace, block)) {
+    // Collision with another folder.
+    var r = name.match(/^(.*?)(\d+)$/);
+    if (!r) {
+      name += '2';
+    } else {
+      name = r[1] + (parseInt(r[2], 10) + 1);
+    }
+  }
+  return name;
+};
+
+/**
+ * Does this folder have a legal name?  Illegal names include names of
+ * procedures already defined.
+ * @param {string} name The questionable name.
+ * @param {!Blockly.Workspace} workspace The workspace to scan for collisions.
+ * @param {Blockly.Block} opt_exclude Optional block to exclude from
+ *     comparisons (one doesn't want to collide with oneself).
+ * @return {boolean} True if the name is legal.
+ */
+Blockly.Folder.isLegalName = function(name, workspace, opt_exclude) {
+  var blocks = workspace.getAllBlocks();
+  // Iterate through every block and check the name.
+  for (var x = 0; x < blocks.length; x++) {
+    if (blocks[x] == opt_exclude) {
+      continue;
+    }
+    var func = blocks[x].getFolderName;
+    if (func) {
+      var folderName = func.call(blocks[x]);
+      if (Blockly.Names.equals(folderName, name)) {
+        return false;
+      }
+    }
+  }
+  return true;
+};

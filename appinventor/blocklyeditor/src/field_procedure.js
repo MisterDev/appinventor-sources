@@ -132,3 +132,31 @@ Blockly.AIProcedure.renameProcedure = function (newName) {
   }
   return newName;
 };
+
+// [lyn, 10/27/13] Defined as a replacement for Blockly.Procedures.rename
+Blockly.AIProcedure.renameFolder = function (newName) {
+  // this is bound to field_textinput object
+  var oldName = this.text_;
+
+  // [lyn, 10/27/13] now check legality of identifiers
+  newName = Blockly.LexicalVariable.makeLegalIdentifier(newName);
+
+  // [lyn, 10/28/13] Prevent two procedures from having the same name.
+  var procBlocks = Blockly.AIProcedure.getAllFolderBlocksExcept(this.sourceBlock_); //todo
+  var procNames = procBlocks.map(function (decl) { return decl.getFieldValue('NAME'); });
+  newName = Blockly.FieldLexicalVariable.nameNotIn(newName, procNames);//todo
+  return newName;
+};
+
+Blockly.AIProcedure.getAllFolderBlocksExcept = function (block) {
+  var topBlocks = Blockly.mainWorkspace.getTopBlocks();
+  var blockArray = [];
+  for (var i=0;i<topBlocks.length;i++){
+    if(topBlocks[i].type === "folder") {
+      if (topBlocks[i] !== block) {
+        blockArray.push(topBlocks[i]);
+      }
+    }
+  }
+  return blockArray;
+};

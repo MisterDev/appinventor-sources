@@ -72,6 +72,7 @@ Blockly.Msg.en.switch_language_to_english = {
 // Toolbox.
     Blockly.MSG_VARIABLE_CATEGORY = 'Variables';
     Blockly.MSG_PROCEDURE_CATEGORY = 'Procedures';
+    Blockly.MSG_FOLDER_CATEGORY = 'Folders';
 
 // Warnings/Errors
     Blockly.ERROR_BLOCK_CANNOT_BE_IN_DEFINTION = "This block cannot be in a definition";
@@ -983,7 +984,7 @@ Blockly.Msg.en.switch_language_to_english = {
     Blockly.Msg.LANG_PROCEDURES_MUTATORARG_TOOLTIP = '';
 
 // Folders Blocks.
-    Blockly.Msg.LANG_FOLDERS_FOLDER = 'Folder';
+    Blockly.Msg.LANG_FOLDERS_FOLDER = 'folder';
 
 // Components Blocks.
     Blockly.Msg.LANG_COMPONENT_BLOCK_HELPURL = '';
