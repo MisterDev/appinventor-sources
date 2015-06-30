@@ -227,7 +227,7 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
             'height': '70%', 'width': '40%'}, svgGroupEmboss);
     this.svgTitle_ = Blockly.createSvgElement('text',{
         'class':'blocklyText'},this.svgGroup_);
-    this.svgTitle_.innerHTML="Folder"+this.block_.id;
+    this.svgTitle_.innerHTML=this.block_.getFolderName();//"Folder"+this.block_.id;
     this.resizeGroup_ = null;
     //this.svgBlockCanvas_.appendChild(content);
 
