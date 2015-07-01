@@ -143,7 +143,8 @@ Blockly.MiniWorkspace.prototype.renderWorkspace = function (folder, anchorX, anc
     this.svgGroupBack_.setAttribute('height',this.height_+20);
     this.svgGroupBack_.setAttribute('transform','translate(-5,-25)');
     this.svgGroup_.setAttribute('width',this.width_);
-    this.svgTitle_.setAttribute('transform','translate(10, -7.5)');
+    this.svgTitle_.setAttribute('transform','translate(31, -7.5)');
+    this.iconGroup_.setAttribute('transform','translate(5, -20)');
 
 
     Blockly.fireUiEvent(this.svgGroup_,'resize');
@@ -188,6 +189,7 @@ Blockly.MiniWorkspace.prototype.disposeWorkspace = function () {
     this.svgBlockCanvas_ = null;
     this.svgBubbleCanvas_ = null;
     this.svgGroupBack_ = null;
+    this.iconGroup_ = null;
     this.workspace_ = null;
     this.content_ = null;
     this.shape_ = null;
@@ -200,6 +202,7 @@ Blockly.MiniWorkspace.prototype.disposeWorkspace = function () {
 
 //MiniWorkspace cannot be resized - this can change in the future
 Blockly.MiniWorkspace.prototype.createDom_ = function () {
+
     this.svgGroup_ = Blockly.createSvgElement('g', {}, null);
     var svgGroupEmboss = Blockly.createSvgElement('g',
         {'filter': 'url(#blocklyEmboss)'}, this.svgGroup_);
@@ -232,6 +235,19 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
     //this.svgBlockCanvas_.appendChild(content);
 
     //this.svgGroup_.appendChild(content);
+    this.iconGroup_ = Blockly.createSvgElement('g', {'class': 'blocklyIconGroup'}, this.svgGroup_);
+    var quantum = Blockly.Icon.RADIUS / 2;
+    var iconShield = Blockly.createSvgElement('rect',
+        {'class': 'blocklyIconShield',
+            'width': 4 * quantum,
+            'height': 4 * quantum,
+            'rx': quantum,
+            'ry': quantum}, this.iconGroup_);
+    var iconMark_ = Blockly.createSvgElement('text',
+        {'class': 'blocklyIconMark',
+            'x': Blockly.Icon.RADIUS,
+            'y': 2 * Blockly.Icon.RADIUS - 4}, this.iconGroup_);
+    iconMark_.appendChild(document.createTextNode("-"));
 
     return this.svgGroup_;
 };
