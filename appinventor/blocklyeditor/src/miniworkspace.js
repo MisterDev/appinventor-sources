@@ -235,7 +235,11 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
     //this.svgBlockCanvas_.appendChild(content);
 
     //this.svgGroup_.appendChild(content);
+    // Button to collapse the miniworkspace 
     this.iconGroup_ = Blockly.createSvgElement('g', {'class': 'blocklyIconGroup'}, this.svgGroup_);
+    Blockly.bindEvent_(this.iconGroup_, 'mouseup', this, function(){
+        this.block_.folderIcon.setVisible(false);
+    });
     var quantum = Blockly.Icon.RADIUS / 2;
     var iconShield = Blockly.createSvgElement('rect',
         {'class': 'blocklyIconShield',
