@@ -145,6 +145,10 @@ Blockly.AIProcedure.renameFolder = function (newName) {
   var procBlocks = Blockly.AIProcedure.getAllFolderBlocksExcept(this.sourceBlock_); //todo
   var procNames = procBlocks.map(function (decl) { return decl.getFieldValue('NAME'); });
   newName = Blockly.FieldLexicalVariable.nameNotIn(newName, procNames);//todo
+  //Sets the name in the miniworkspace if it is open
+  if(this.sourceBlock_.expandedFolder_){
+    this.sourceBlock_.miniworkspace.svgTitle_.innerHTML=newName;
+  }
   return newName;
 };
 
