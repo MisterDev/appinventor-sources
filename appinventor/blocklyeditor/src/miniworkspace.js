@@ -141,9 +141,9 @@ Blockly.MiniWorkspace.prototype.renderWorkspace = function (folder, anchorX, anc
     this.height_ = Math.max(this.height_, 30 + Blockly.BlockSvg.FIELD_HEIGHT);
     this.svgGroupBack_.setAttribute('width',this.width_);
     this.svgGroupBack_.setAttribute('height',this.height_+20);
-    this.svgGroupBack_.setAttribute('transform','translate(-5,-5)');
+    this.svgGroupBack_.setAttribute('transform','translate(-5,-25)');
     this.svgGroup_.setAttribute('width',this.width_);
-    this.svgTitle_.setAttribute('transform','translate(10,'+(this.height_+5)+')');
+    this.svgTitle_.setAttribute('transform','translate(10, -7.5)');
 
 
     Blockly.fireUiEvent(this.svgGroup_,'resize');
@@ -227,7 +227,7 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
             'height': '70%', 'width': '40%'}, svgGroupEmboss);
     this.svgTitle_ = Blockly.createSvgElement('text',{
         'class':'blocklyText'},this.svgGroup_);
-    this.svgTitle_.innerHTML=this.block_.getFolderName();//"Folder"+this.block_.id;
+    this.svgTitle_.innerHTML=this.block_.getFolderName();
     this.resizeGroup_ = null;
     //this.svgBlockCanvas_.appendChild(content);
 

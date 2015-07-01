@@ -96,7 +96,7 @@ Blockly.FolderIcon.prototype.setVisible = function(visible) {
         // Create the bubble.        
         var width = this.block_.getHeightWidth().width;
         var position = this.block_.getRelativeToSurfaceXY();
-        this.block_.miniworkspace.renderWorkspace(this.block_, position.x + width + 10, position.y);
+        this.block_.miniworkspace.renderWorkspace(this.block_, position.x + width + 10, position.y + 20);
     } else {
         this.block_.miniworkspace.xml = Blockly.Xml.workspaceToDom(this.block_.miniworkspace);
         this.block_.miniworkspace.disposeWorkspace();
