@@ -519,7 +519,22 @@ Blockly.Workspace.prototype.moveIntoFolder = function (block) {
       'translate(' + x + ', ' + y + ')');
 
   moveConnections(block);
-
+  if(block.comment){
+    if(block.comment.bubble_){
+      var svgGrup = goog.dom.removeNode(block.comment.bubble_.bubbleGroup_);
+      block.comment.bubble_.workspace_ = newWorkspace;
+      newWorkspace.getCanvas().appendChild(svgGrup);
+    }
+    block.comment.computeIconLocation();
+  }
+  if(block.mutator){
+    if(block.mutator.bubble_){
+      var svgGrup = goog.dom.removeNode(block.mutator.bubble_.bubbleGroup_);
+      block.mutator.bubble_.workspace_ = newWorkspace;
+      newWorkspace.getCanvas().appendChild(svgGrup);
+    }
+    block.mutator.computeIconLocation();
+  }
   // [Devid] Recursively moves the connections of this block and 
   // his descendant between workspaces
   function moveConnections(currBlock) {
@@ -589,7 +604,22 @@ Blockly.Workspace.prototype.moveOutOfFolder = function (block) {
   block.isInFolder = false;
   
   moveConnections(block);
-
+  if(block.comment){
+    if(block.comment.bubble_){
+      var svgGrup = goog.dom.removeNode(block.comment.bubble_.bubbleGroup_);
+      block.comment.bubble_.workspace_ = newWorkspace;
+      newWorkspace.getCanvas().appendChild(svgGrup);
+    }
+    block.comment.computeIconLocation();
+  }
+  if(block.mutator){
+    if(block.mutator.bubble_){
+      var svgGrup = goog.dom.removeNode(block.mutator.bubble_.bubbleGroup_);
+      block.mutator.bubble_.workspace_ = newWorkspace;
+      newWorkspace.getCanvas().appendChild(svgGrup);
+    }
+    block.mutator.computeIconLocation();
+  }
   // [Devid] Recursively moves the connections of this block and 
   // his descendant between workspaces
   function moveConnections(currBlock) {
