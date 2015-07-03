@@ -1338,6 +1338,9 @@ Blockly.Msg.en.switch_language_to_english = {
 
 // Messages from Blockly.js
     Blockly.Msg.WARNING_DELETE_X_BLOCKS = "Are you sure you want to delete all %1 of these blocks?";
+    Blockly.Msg.WARNING_DELETE_FOLDER = "This folder contains %1 blocks, are you sure you want to delete it?";
+    Blockly.Msg.WARNING_DELETE_FOLDER_BLOCK = "block";
+    Blockly.Msg.WARNING_DELETE_FOLDER_BLOCKS = "blocks";
 
 // Blocklyeditor.js
     Blockly.Msg.GENERATE_YAIL = "Generate Yail";

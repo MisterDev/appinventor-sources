@@ -344,3 +344,19 @@ Blockly.Folder.isLegalName = function(name, workspace, opt_exclude) {
   }
   return true;
 };
+
+/**
+ * Show a confirmation dialog if users intend to delete more that #DELETION_THRESHOLD blocks.
+ * @returns {Boolean} true if there are less than #DELETION_THRESHOLD blocks to delete or the user
+ * confirms deletion.
+ */
+Blockly.Folder.prototype.confirmDeletion = function(){
+    if(this.miniworkspace.topBlocks_.length == 0 ){
+        return true;
+    }
+    var txt = (this.miniworkspace.getAllBlocks().length > 1) ? 
+            Blockly.Msg.WARNING_DELETE_FOLDER_BLOCKS : Blockly.Msg.WARNING_DELETE_FOLDER_BLOCK;
+    return confirm(Blockly.Msg.WARNING_DELETE_FOLDER
+            .replace('%1',this.miniworkspace.getAllBlocks().length)
+            .replace('%2', txt));
+};
