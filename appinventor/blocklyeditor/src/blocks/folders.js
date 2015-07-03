@@ -9,7 +9,7 @@ Blockly.Blocks['folder'] = {
         var name = Blockly.Folder.findLegalName(
             Blockly.Msg.LANG_FOLDERS_FOLDER, this);
         this.appendDummyInput()
-            .appendField(new Blockly.FieldTextInput(name, Blockly.AIProcedure.renameFolder), 'NAME');
+            .appendField(new Blockly.FieldTextInput(name, Blockly.AIFolder.renameFolder), 'NAME');
             //.appendField(new Blockly.FieldTextBlockInput('FOLDER NAME'), 'TEXT');
         //this.setMutator(new Blockly.Mutator(['procedures_mutatorarg']));
         this.setFolderIcon(new Blockly.FolderIcon());
