@@ -78,6 +78,7 @@
     "./src/errorIcon.js",
     "./src/warningHandler.js",
     "./src/field_procedure.js",
+    "./src/field_folder.js",
     "./src/field_textblockinput.js",
     "./src/warningIndicator.js",
     "./src/flydown.js",
