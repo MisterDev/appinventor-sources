@@ -128,6 +128,10 @@ Blockly.Folder.prototype.fill = function(workspace, prototypeName) {
         Blockly.MiniWorkspace.setWorkspaceMetrics_);
     this.expandedFolder_ = false;
     this.workspace = workspace;
+    if(this.workspace != Blockly.mainWorkspace){
+        this.parentBlock_ = this.workspace.block_;
+    }
+
     this.isInFlyout = workspace.isFlyout;
     // This is missing from our latest version
     //workspace.addTopBlock(this);
@@ -279,6 +283,18 @@ Blockly.Folder.prototype.isOverFolder = function(e) {
     } else {
         return false;
     }
+};
+
+Blockly.Folder.prototype.isParentOf = function(folder) {
+    var current = folder;
+    while(current.parentBlock_){
+        if(current.parentBlock_ == this){
+            return true;
+        } else {
+            current = current.parentBlock_;
+        }
+    }
+    return false;
 };
 
 Blockly.Folder.prototype.promote = function() {

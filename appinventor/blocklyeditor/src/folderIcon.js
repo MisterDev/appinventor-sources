@@ -53,13 +53,8 @@ Blockly.FolderIcon.prototype.renderIcon = function(cursorX) {
     return cursorX;
 };
 
-Blockly.FolderIcon.prototype.toggleIcon = function() {
-    this.block_.expandedFolder_ = !this.block_.expandedFolder_;
-    this.iconMark_.innerHTML = this.block_.expandedFolder_ ? "-" : "+";
-};
 
 Blockly.FolderIcon.prototype.iconClick_ = function(e) {
-    this.toggleIcon();
     this.block_.promote();
     if (this.block_.isEditable()) {
         if (!this.block_.isInFlyout) {
@@ -92,6 +87,12 @@ Blockly.FolderIcon.prototype.setVisible = function(visible) {
         // No change.
         return;
     }
+    var miniworkspace = this.block_.miniworkspace;
+    //If th mw is not rendered, create an empty miniworkspace
+    if(!miniworkspace.rendered_ && !miniworkspace.isInFlyout){
+        miniworkspace.renderWorkspace(this.block_);
+    }
+
     if (visible) {
         // Create the bubble.        
         var width = this.block_.getHeightWidth().width;
@@ -103,32 +104,38 @@ Blockly.FolderIcon.prototype.setVisible = function(visible) {
           position.x += miniWorkspaceOrigin.x + parseInt(translate_[0]);
           position.y += miniWorkspaceOrigin.y + parseInt(translate_[1]);
         }
+        miniworkspace.setAnchorLocation(position.x + width + 10, position.y + 20);
+        //Set MW  Size
+        try {
+            var bBox = /** @type {SVGLocatable} */ (miniworkspace.svgBlockCanvas_).getBBox();
+        } catch (e) {
+            // Firefox has trouble with hidden elements (Bug 528969).
+            var bBox = {height: 0, width: 0};
+        }
+        miniworkspace.width_ = bBox.width + 2 * Blockly.Bubble.BORDER_WIDTH;
+        miniworkspace.height_ = bBox.height + 2 * Blockly.Bubble.BORDER_WIDTH;
+        var doubleBorderWidth = 2 * Blockly.Bubble.BORDER_WIDTH;
+        miniworkspace.width_ = Math.max(miniworkspace.width_, doubleBorderWidth + 45);
+        miniworkspace.height_ = Math.max(miniworkspace.height_, 30 + Blockly.BlockSvg.FIELD_HEIGHT);
+        miniworkspace.svgGroupBack_.setAttribute('width', miniworkspace.width_);
+        miniworkspace.svgGroupBack_.setAttribute('height', miniworkspace.height_+20);
+        miniworkspace.svgGroup_.setAttribute('width', miniworkspace.width_);
 
-        this.block_.miniworkspace.renderWorkspace(this.block_, position.x + width + 10, position.y + 20);        
+
+        Blockly.fireUiEvent(miniworkspace.svgGroup_,'resize');
+
+        miniworkspace.positionMiniWorkspace_ ();
+        miniworkspace.scrollbar.resize();
+
+
+        miniworkspace.svgGroup_.setAttribute('display','block');
     } else {
-        this.block_.miniworkspace.xml = Blockly.Xml.workspaceToDom(this.block_.miniworkspace);
-        this.block_.miniworkspace.disposeWorkspace();
-        // Needed when expanding a folder that has been collapsed opened
-        this.iconMark_.innerHTML = "+";
-        //this.dispose();
-        //// Dispose of the bubble.
-        //this.svgDialog_ = null;
-        ////this.flyout_.dispose();
-        ////this.flyout_ = null;
-        //this.workspace_.dispose();
-        //this.workspace_ = null;
-        //this.rootBlock_ = null;
-        //this.bubble_.dispose();
-        //this.bubble_ = null;
-        //this.workspaceWidth_ = 0;
-        //this.workspaceHeight_ = 0;
-        //if (this.sourceListener_) {
-        //    Blockly.unbindEvent_(this.sourceListener_);
-        //    this.sourceListener_ = null;
-        //}
+        miniworkspace.svgGroup_.setAttribute('display','none');
     }
 
-    this.visible = !this.isVisible();
+    this.block_.expandedFolder_ = visible;
+    this.iconMark_.innerHTML = this.block_.expandedFolder_ ? "-" : "+";
+    this.visible = visible;
 };
 
 Blockly.FolderIcon.prototype.getIconLocation = function() {
@@ -136,11 +143,22 @@ Blockly.FolderIcon.prototype.getIconLocation = function() {
 };
 
 Blockly.FolderIcon.prototype.dispose = function() {
+    if(!this.block_.isInFlyout){
+        //Dispose all the nested folders
+        var topBlocks = this.block_.miniworkspace.topBlocks_;
+        if(topBlocks.length > 0){
+            for(var x = 0; x < topBlocks.length; x++){
+                if(topBlocks[x].type == "folder"){
+                   topBlocks[x].folderIcon.dispose();
+                }
+            }
+        }
+        this.block_.removeFromAllFolders();
+    }
+    this.block_.miniworkspace.disposeWorkspace();
     // Dispose of and unlink the icon.
     goog.dom.removeNode(this.iconGroup_);
     this.iconGroup_ = null;
-    // Dispose of and unlink the bubble.
-    this.setVisible(false);
     this.block_ = null;
 };
 
