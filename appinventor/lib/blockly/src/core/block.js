@@ -155,6 +155,14 @@ Blockly.Block.prototype.fill = function(workspace, prototypeName) {
   // This is missing from our latest version
   //workspace.addTopBlock(this);
 
+  /**
+   * [emery, 06/15]
+   * Dictionary of block's text bubble icons (for doit, watch, yail, and comments)
+   * Maps a string key to an instance of Blockly.TextBubble.
+   * @type {Blockly.TextBubble}
+   */
+  this.textBubbles = {};
+
   // Copy the type-specific functions and data from the prototype.
   if (prototypeName) {
     this.type = prototypeName;
@@ -237,6 +245,16 @@ Blockly.Block.prototype.getIcons = function() {
   if (this.errorIcon) {
     icons.push(this.errorIcon);
   }
+  // [emery, 06/15]
+  // added to account for icons from textBubbles dictionary
+  // start
+    var textBubbleKeys = Object.keys(this.textBubbles);
+    for (var i = 0, key; key = textBubbleKeys[i]; i++) {
+      if (this.textBubbles[key]) {
+        icons.push(this.textBubbles[key]);
+      }
+  }
+  // end
   return icons;
 };
 
@@ -1995,7 +2013,9 @@ Blockly.Block.prototype.setCommentText = function(text) {
   var changedState = false;
   if (goog.isString(text)) {
     if (!this.comment) {
-      this.comment = new Blockly.Comment(this);
+     // this.comment = new Blockly.Comment(this);
+      // [emery, 06/15] changed so that comments are deferred to TextBubbles (glorified Comments)
+      this.comment = new Blockly.TextBubble(this, Blockly.BlocklyEditor.commentChar);
       changedState = true;
     }
     this.comment.setText(/** @type {string} */ (text));
