@@ -505,6 +505,9 @@ Blockly.Workspace.prototype.moveIntoFolder = function (block) {
   var miniWorkspaceOrigin = Blockly.getRelativeXY_(this.svgGroup_);
   Blockly.mainWorkspace.removeTopBlock(block);
   this.addTopBlock(block);
+  if(block.type == "folder"){
+    block.parentBlock_ = newWorkspace.block_;
+  }
   //surgically removes all svg associated with block from old workspace canvas
   var svgGroup = goog.dom.removeNode(block.svg_.svgGroup_);
   block.workspace = this;
@@ -589,6 +592,9 @@ Blockly.Workspace.prototype.moveOutOfFolder = function (block) {
     oldWorkspace.removeTopBlock(block);
   }
   newWorkspace.addTopBlock(block);
+  if(block.type == "folder"){
+    block.parentBlock_ = null;
+  }
   //surgically removes all svg associated with block from old workspace canvas
   var svgGroup = goog.dom.removeNode(block.svg_.svgGroup_);
   block.workspace = newWorkspace;

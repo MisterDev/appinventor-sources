@@ -116,56 +116,31 @@ Blockly.MiniWorkspace.setWorkspaceMetrics_ = function(xyRatio) {
 };
 
 //TODO
-Blockly.MiniWorkspace.prototype.renderWorkspace = function (folder, anchorX, anchorY) {
+Blockly.MiniWorkspace.prototype.renderWorkspace = function (folder, xml) {
     this.createDom();
 
     Blockly.ConnectionDB.init(this);
-    this.block_.expandedFolder_ = true;
+    this.block_.expandedFolder_ = false;
     this.workspace_ = folder.workspace;
     this.shape_ = folder.svg_.svgPath_;
     var canvas = Blockly.mainWorkspace.getCanvas();
     canvas.appendChild(this.createDom_());
 
-    this.setAnchorLocation(anchorX, anchorY);
-    //Set MW  Size
-    try {
-        var bBox = /** @type {SVGLocatable} */ (this.svgBlockCanvas_).getBBox();
-    } catch (e) {
-        // Firefox has trouble with hidden elements (Bug 528969).
-        var bBox = {height: 0, width: 0};
-    }
-    this.width_ = bBox.width + 2 * Blockly.Bubble.BORDER_WIDTH;
-    this.height_ = bBox.height + 2 * Blockly.Bubble.BORDER_WIDTH;
-    var doubleBorderWidth = 2 * Blockly.Bubble.BORDER_WIDTH;
-    this.width_ = Math.max(this.width_, doubleBorderWidth + 45);
-    this.height_ = Math.max(this.height_, 30 + Blockly.BlockSvg.FIELD_HEIGHT);
-    this.svgGroupBack_.setAttribute('width',this.width_);
-    this.svgGroupBack_.setAttribute('height',this.height_+20);
+    //this.setAnchorLocation(0, 0);
+
     this.svgGroupBack_.setAttribute('transform','translate(-5,-25)');
-    this.svgGroup_.setAttribute('width',this.width_);
+    this.svgGroup_.setAttribute('display','none');
     this.svgTitle_.setAttribute('transform','translate(31, -7.5)');
     this.iconGroup_.setAttribute('transform','translate(5, -20)');
 
-
-    Blockly.fireUiEvent(this.svgGroup_,'resize');
-
-    this.positionMiniWorkspace_ ();
     this.rendered_ = true;
     this.scrollbar = new Blockly.ScrollbarPair(this);
-    this.scrollbar.resize();
 
-    //render topBlocks_
-    //var topBlocks = this.getTopBlocks();
     this.topBlocks_ = [];
-    //for (var x = 0, b; b = topBlocks[x]; x++) {
-    //    var dom = Blockly.Xml.blockToDom_(b);
-    //    var bl = Blockly.Xml.domToBlock(this,dom);
-    //    bl.IsInFolder = true;
-    //}
-    //this.fireChangeEvent();
-    if (this.xml) {
+
+    if (xml) {
         this.clear();
-        Blockly.Xml.domToWorkspace(this, this.xml);
+        Blockly.Xml.domToWorkspace(this, xml);
     }
 
     this.render();

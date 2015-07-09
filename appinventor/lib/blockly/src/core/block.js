@@ -390,10 +390,6 @@ Blockly.Block.prototype.isBadBlock = function() {
  */
 Blockly.Block.prototype.dispose = function(healStack, animate,
                                            dontRemoveFromWorkspace) {
-  if (this.type == "folder") {
-    this.miniworkspace.dispose();
-  }
-
   // Switch off rerendering.
   this.rendered = false;
   this.unplug(healStack);
@@ -1032,7 +1028,6 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
         commentData.bubble.setIconLocation(commentData.x + dx,
             commentData.y + dy);
       }
-
       //find the folder the block is over
       var overFolder = null;
       for (var i = 0; i < Blockly.ALL_FOLDERS.length; i++) {
@@ -1044,12 +1039,13 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
       }
       //remove highlighting if necessary
       if (Blockly.selectedFolder_ &&
-          Blockly.selectedFolder_ != overFolder) {
+          Blockly.selectedFolder_ != overFolder ) {
         Blockly.selectedFolder_.miniworkspace.unhighlight_();
         Blockly.selectedFolder_ = null;
       }
       //add highlighting if necessary
-      if (overFolder && overFolder != Blockly.selectedFolder_) {
+      if (overFolder && overFolder != Blockly.selectedFolder_ &&
+          (this_.type != "folder" || (overFolder && !this_.isParentOf(overFolder)))) {
         Blockly.selectedFolder_ = overFolder;
         Blockly.selectedFolder_.miniworkspace.highlight_();
       }

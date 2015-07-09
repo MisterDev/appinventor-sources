@@ -44,12 +44,13 @@ Blockly.Xml.workspaceToDom = function(workspace) {
   }
   var xml = goog.dom.createDom('xml');
   var blocks = workspace.getTopBlocks(true);
+  debugger;
   for (var i = 0, block; block = blocks[i]; i++) {
     // [Devid] Generate the DOM only if the block is in the given workspace
     // because getTopBlocks() returns also miniworkspaces's topBlocks_
     if(block.workspace == workspace){
       var element = Blockly.Xml.blockToDom_(block);
-        if (block.type == "folder") {
+      if (block.type == "folder") {
             var folder = Blockly.Xml.workspaceToDom(block.miniworkspace);
             for (var x = 0, b; b = folder.childNodes[x];){
                 element.appendChild(b);
@@ -61,6 +62,8 @@ Blockly.Xml.workspaceToDom = function(workspace) {
       xml.appendChild(element);
     }
   }
+  console.log('WTD');
+  console.log(xml);
   return xml;
 };
 
@@ -236,21 +239,21 @@ Blockly.Xml.domToWorkspace = function(workspace, xml) {
 // using phantomjs (unit test) you wind up fetching memory garbage (!!)
 //
 //        for (var x = 0, xmlChild; xmlChild = xml.childNodes[x]; x++) {
+  console.log('XMLTODOM');
+  console.log(workspace);
+  console.log(xml);
         var xmlChild;
         for (var x = 0; x < xml.childNodes.length; x++) {
           xmlChild = xml.childNodes[x];
           if (xmlChild.nodeName.toLowerCase() == 'block') {
             var block = Blockly.Xml.domToBlock(workspace, xmlChild);
-              if (block.type == "folder") {
-                  var folderXML = goog.dom.createDom('xml');
-                  while(xmlChild.children.length > 0) {
-                      folderXML.appendChild(xmlChild.children[0]);
-                  }
-                  block.miniworkspace.xml = folderXML;
-                  // [Devid] populates the topBlocks_ of every miniworkspace
-                  block.folderIcon.setVisible(true);
-                  block.folderIcon.setVisible(false);
+            if (block.type == "folder") {
+              var folderXML = goog.dom.createDom('xml');
+              while(xmlChild.children.length > 0) {
+                folderXML.appendChild(xmlChild.children[0]);
               }
+              block.miniworkspace.renderWorkspace(block, folderXML);
+            }
             var blockX = parseInt(xmlChild.getAttribute('x'), 10);
             var blockY = parseInt(xmlChild.getAttribute('y'), 10);
             if (!isNaN(blockX) && !isNaN(blockY)) {
