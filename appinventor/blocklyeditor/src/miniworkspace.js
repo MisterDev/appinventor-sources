@@ -170,8 +170,8 @@ Blockly.MiniWorkspace.prototype.disposeWorkspace = function () {
     this.shape_ = null;
     this.block_.expandedFolder_ = false;
 
-    for (var t = 0, block; block = this.topBlocks_[t]; t++) {
-        block.rendered = false;
+    while (this.topBlocks_.length > 0) {
+        this.topBlocks_[0].dispose();
     }
 };
 

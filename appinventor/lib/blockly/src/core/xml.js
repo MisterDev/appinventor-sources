@@ -44,7 +44,6 @@ Blockly.Xml.workspaceToDom = function(workspace) {
   }
   var xml = goog.dom.createDom('xml');
   var blocks = workspace.getTopBlocks(true);
-  debugger;
   for (var i = 0, block; block = blocks[i]; i++) {
     // [Devid] Generate the DOM only if the block is in the given workspace
     // because getTopBlocks() returns also miniworkspaces's topBlocks_

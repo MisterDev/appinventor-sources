@@ -405,6 +405,9 @@ Blockly.Block.prototype.dispose = function(healStack, animate,
     this.workspace = null;
   }
 
+  if(this.type == 'folder' && !this.isInFlyout){
+        this.removeFromAllFolders();
+  }
   // Just deleting this block from the DOM would result in a memory leak as
   // well as corruption of the connection database.  Therefore we must
   // methodically step through the blocks and carefully disassemble them.

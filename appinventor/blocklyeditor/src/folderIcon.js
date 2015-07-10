@@ -143,18 +143,6 @@ Blockly.FolderIcon.prototype.getIconLocation = function() {
 };
 
 Blockly.FolderIcon.prototype.dispose = function() {
-    if(!this.block_.isInFlyout){
-        //Dispose all the nested folders
-        var topBlocks = this.block_.miniworkspace.topBlocks_;
-        if(topBlocks.length > 0){
-            for(var x = 0; x < topBlocks.length; x++){
-                if(topBlocks[x].type == "folder"){
-                   topBlocks[x].folderIcon.dispose();
-                }
-            }
-        }
-        this.block_.removeFromAllFolders();
-    }
     this.block_.miniworkspace.disposeWorkspace();
     // Dispose of and unlink the icon.
     goog.dom.removeNode(this.iconGroup_);

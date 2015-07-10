@@ -128,9 +128,6 @@ Blockly.Folder.prototype.fill = function(workspace, prototypeName) {
         Blockly.MiniWorkspace.setWorkspaceMetrics_);
     this.expandedFolder_ = false;
     this.workspace = workspace;
-    if(this.workspace != Blockly.mainWorkspace){
-        this.parentBlock_ = this.workspace.block_;
-    }
 
     this.isInFlyout = workspace.isFlyout;
     // This is missing from our latest version
@@ -286,12 +283,12 @@ Blockly.Folder.prototype.isOverFolder = function(e) {
 };
 
 Blockly.Folder.prototype.isParentOf = function(folder) {
-    var current = folder;
-    while(current.parentBlock_){
-        if(current.parentBlock_ == this){
+    var current = folder.workspace.block_;
+    while(current){
+        if(current == this){
             return true;
         } else {
-            current = current.parentBlock_;
+            current = current.workspace.block_;
         }
     }
     return false;
