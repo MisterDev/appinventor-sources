@@ -107,7 +107,7 @@ Blockly.Css.CONTENT = [
 
   '.blocklySelectedFolder {',
   'stroke-width: 10px;',
-  'stroke: #f33;',
+  'stroke: #56a628;',
   '}',
 
   '.blocklySelected>.blocklyPath {',

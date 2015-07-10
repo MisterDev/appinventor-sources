@@ -61,8 +61,6 @@ Blockly.Xml.workspaceToDom = function(workspace) {
       xml.appendChild(element);
     }
   }
-  console.log('WTD');
-  console.log(xml);
   return xml;
 };
 
@@ -238,9 +236,6 @@ Blockly.Xml.domToWorkspace = function(workspace, xml) {
 // using phantomjs (unit test) you wind up fetching memory garbage (!!)
 //
 //        for (var x = 0, xmlChild; xmlChild = xml.childNodes[x]; x++) {
-  console.log('XMLTODOM');
-  console.log(workspace);
-  console.log(xml);
         var xmlChild;
         for (var x = 0; x < xml.childNodes.length; x++) {
           xmlChild = xml.childNodes[x];

@@ -308,6 +308,33 @@ Blockly.Folder.prototype.promote = function() {
 };
 
 /**
+ * Duplicate this folder and its mini workspace
+ * @return {!Blockly.Block} The duplicate.
+ * @private
+ */
+Blockly.Folder.prototype.duplicate_ = function() {
+    // Create a duplicate via XML.
+    var xmlBlock = Blockly.Xml.blockToDom_(this);
+    //Blockly.Xml.deleteNext(xmlBlock);
+    var folderXML = Blockly.Xml.workspaceToDom(this.miniworkspace);
+
+    var newBlock = Blockly.Xml.domToBlock((this.workspace), xmlBlock);
+    newBlock.miniworkspace.renderWorkspace(newBlock, folderXML);
+    // Move the duplicate next to the old block.
+
+    var xy = this.getRelativeToSurfaceXY();
+    if (Blockly.RTL) {
+        xy.x -= Blockly.SNAP_RADIUS;
+    } else {
+        xy.x += Blockly.SNAP_RADIUS;
+    }
+    xy.y += Blockly.SNAP_RADIUS * 2;
+    newBlock.moveBy(xy.x, xy.y);
+    newBlock.select();
+    return newBlock;
+};
+
+/**
  * Ensure two identically-named folders don't exist.
  * @param {string} name Proposed folder name.
  * @param {!Blockly.Block} block Block to disambiguate.
