@@ -27,6 +27,9 @@ Blockly.MiniWorkspace = function(folder,getMetrics,setMetrics) {
 
 goog.inherits(Blockly.MiniWorkspace, Blockly.Workspace);
 
+Blockly.MiniWorkspace.DEFAULT_HEIGHT = 200;
+Blockly.MiniWorkspace.DEFAULT_WIDTH = 250;
+
 Blockly.MiniWorkspace.prototype.rendered_ = false;
 Blockly.MiniWorkspace.prototype.scrollbar_ = true;
 
@@ -43,16 +46,11 @@ Blockly.MiniWorkspace.prototype.height_ = 0;
 Blockly.MiniWorkspace.prototype.autoLayout_ = true;
 
 Blockly.MiniWorkspace.getWorkspaceMetrics_ = function () {
-    var svgSize = Blockly.svgSize();
-    //the workspace is just a percentage though.
-    svgSize.width *= 0.4;
-    svgSize.height *= 0.7;
-
+    var doubleBorderWidth = 2 * Blockly.Bubble.BORDER_WIDTH;
     //We don't use Blockly.Toolbox in our version of Blockly instead we use drawer.js
     //svgSize.width -= Blockly.Toolbox.width;  // Zero if no Toolbox.
-    svgSize.width -= 0;  // Zero if no Toolbox.
-    var viewWidth = svgSize.width - Blockly.Scrollbar.scrollbarThickness;
-    var viewHeight = svgSize.height - Blockly.Scrollbar.scrollbarThickness;
+    var viewWidth = this.width_ - doubleBorderWidth;
+    var viewHeight = this.height_ - doubleBorderWidth;
     try {
         var blockBox = this.getCanvas().getBBox();
     } catch (e) {
@@ -80,8 +78,8 @@ Blockly.MiniWorkspace.getWorkspaceMetrics_ = function () {
     //var absoluteLeft = Blockly.RTL ? 0 : Blockly.Toolbox.width;
     var absoluteLeft = Blockly.RTL ? 0 : 0;
     var metrics = {
-        viewHeight: svgSize.height,
-        viewWidth: svgSize.width,
+        viewHeight: viewHeight,
+        viewWidth: viewWidth,
         contentHeight: bottomEdge - topEdge,
         contentWidth: rightEdge - leftEdge,
         viewTop: -this.scrollY,
@@ -116,8 +114,7 @@ Blockly.MiniWorkspace.setWorkspaceMetrics_ = function(xyRatio) {
 };
 
 //TODO
-Blockly.MiniWorkspace.prototype.renderWorkspace = function (folder, xml) {
-    this.createDom();
+Blockly.MiniWorkspace.prototype.renderWorkspace = function (folder, xml, height, width) {
 
     Blockly.ConnectionDB.init(this);
     this.block_.expandedFolder_ = false;
@@ -129,7 +126,7 @@ Blockly.MiniWorkspace.prototype.renderWorkspace = function (folder, xml) {
     //this.setAnchorLocation(0, 0);
 
     this.svgGroupBack_.setAttribute('transform','translate(-5,-25)');
-    this.svgGroup_.setAttribute('display','none');
+    this.svgGroup_.setAttribute('visibility','hidden');
     this.svgTitle_.setAttribute('transform','translate(31, -7.5)');
     this.iconGroup_.setAttribute('transform','translate(5, -20)');
 
@@ -144,10 +141,19 @@ Blockly.MiniWorkspace.prototype.renderWorkspace = function (folder, xml) {
     }
 
     this.render();
+    if(height && width){
+        this.resizeMiniWorkspace(height, width);
+    } else {
+        this.resizeMiniWorkspace();
+    }
 
     if (!Blockly.readOnly) {
         Blockly.bindEvent_(this.svgGroupBack_, 'mousedown', this,
             this.miniWorkspaceMouseDown_);
+        if (this.resizeGroup_) {
+          Blockly.bindEvent_(this.resizeGroup_, 'mousedown', this,
+                             this.resizeMouseDown_);
+        }
     }
 };
 
@@ -177,12 +183,12 @@ Blockly.MiniWorkspace.prototype.disposeWorkspace = function () {
 
 //MiniWorkspace cannot be resized - this can change in the future
 Blockly.MiniWorkspace.prototype.createDom_ = function () {
-
     this.svgGroup_ = Blockly.createSvgElement('g', {}, null);
     var svgGroupEmboss = Blockly.createSvgElement('g',
         {'filter': 'url(#blocklyEmboss)'}, this.svgGroup_);
 
-    this.svgBlockCanvasOuter_ = Blockly.createSvgElement('svg', {'height': '70%', 'width': '40%'}, this.svgGroup_);
+    this.svgBlockCanvasOuter_ = Blockly.createSvgElement('svg', 
+        {'height': Blockly.MiniWorkspace.DEFAULT_HEIGHT +'px', 'width': Blockly.MiniWorkspace.DEFAULT_WIDTH+'px'}, this.svgGroup_);
 
     this.svgBlockCanvas_ = Blockly.createSvgElement('g', {}, this.svgBlockCanvasOuter_);
     Blockly.bindEvent_(this.svgBlockCanvas_, 'mousedown', this.svgBlockCanvas_,
@@ -200,16 +206,13 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
         {'class': 'blocklyDraggable', 'x': 0, 'y': 0,
             'rx': Blockly.Bubble.BORDER_WIDTH, 'ry': Blockly.Bubble.BORDER_WIDTH},
         svgGroupEmboss);
-    Blockly.createSvgElement('rect',
+    this.svgBlockCanvasOuterBack_ =Blockly.createSvgElement('rect',
         {'class':'blocklyMutatorBackground',
-            'height': '70%', 'width': '40%'}, svgGroupEmboss);
+            'height': Blockly.MiniWorkspace.DEFAULT_HEIGHT +'px', 'width': Blockly.MiniWorkspace.DEFAULT_WIDTH+'px'}, svgGroupEmboss);
     this.svgTitle_ = Blockly.createSvgElement('text',{
         'class':'blocklyText'},this.svgGroup_);
     this.svgTitle_.innerHTML=this.block_.getFolderName();
-    this.resizeGroup_ = null;
-    //this.svgBlockCanvas_.appendChild(content);
 
-    //this.svgGroup_.appendChild(content);
     // Button to collapse the miniworkspace 
     this.iconGroup_ = Blockly.createSvgElement('g', {'class': 'blocklyIconGroup'}, this.svgGroup_);
     Blockly.bindEvent_(this.iconGroup_, 'mouseup', this, function(){
@@ -228,6 +231,22 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
             'y': 2 * Blockly.Icon.RADIUS - 4}, this.iconGroup_);
     iconMark_.appendChild(document.createTextNode("-"));
 
+    this.resizeGroup_ = Blockly.createSvgElement('g',
+        {'class': Blockly.RTL ? 'blocklyResizeSW' : 'blocklyResizeSE'},
+        this.svgGroup_);
+    var resizeSize = 2 * Blockly.Bubble.BORDER_WIDTH;
+    Blockly.createSvgElement('polygon',
+        {'points': '0,x x,x x,0'.replace(/x/g, resizeSize.toString())},
+        this.resizeGroup_);
+    Blockly.createSvgElement('line',
+        {'class': 'blocklyResizeLine',
+        'x1': resizeSize / 3, 'y1': resizeSize - 1,
+        'x2': resizeSize - 1, 'y2': resizeSize / 3}, this.resizeGroup_);
+    Blockly.createSvgElement('line',
+        {'class': 'blocklyResizeLine',
+        'x1': resizeSize * 2 / 3, 'y1': resizeSize - 1,
+        'x2': resizeSize - 1, 'y2': resizeSize * 2 / 3}, this.resizeGroup_);
+    
     return this.svgGroup_;
 };
 
@@ -259,6 +278,93 @@ Blockly.MiniWorkspace.prototype.positionMiniWorkspace_ = function () {
     var top = this.relativeTop_ + this.anchorY_;
     this.svgGroup_.setAttribute('transform',
         'translate(' + left + ', ' + top + ')');
+};
+
+Blockly.MiniWorkspace.prototype.resizeMiniWorkspace = function(height, width){
+    if(!height){
+        height = Blockly.MiniWorkspace.DEFAULT_HEIGHT;
+    } else if(height < 100){
+        height = 100;
+    }   
+    if(!width){
+        width = Blockly.MiniWorkspace.DEFAULT_WIDTH;
+    }  else if(width < 100){
+        width = 100;
+    } 
+    this.svgBlockCanvasOuter_.setAttribute('width', width);
+    this.svgBlockCanvasOuter_.setAttribute('height', height);
+    this.svgBlockCanvasOuterBack_.setAttribute('width', width);
+    this.svgBlockCanvasOuterBack_.setAttribute('height', height);
+
+    this.width_ = width + 2 * Blockly.Bubble.BORDER_WIDTH; 
+    this.height_ = height + 2 * Blockly.Bubble.BORDER_WIDTH;
+    var doubleBorderWidth = 2 * Blockly.Bubble.BORDER_WIDTH;
+    //this.width_ = Math.max(this.width_, doubleBorderWidth + 45);
+    //this.height_ = Math.max(this.height_, 30 + Blockly.BlockSvg.FIELD_HEIGHT);
+    this.svgGroupBack_.setAttribute('width', this.width_);
+    this.svgGroupBack_.setAttribute('height', this.height_+20);
+    //this.svgGroup_.setAttribute('width', this.width_);
+    
+    this.resizeGroup_.setAttribute('transform', 'translate(' +
+        (width - doubleBorderWidth) + ', ' +
+        (height - doubleBorderWidth) + ')');
+
+    Blockly.fireUiEvent(this.svgGroup_,'resize');
+
+    this.positionMiniWorkspace_ ();
+    this.scrollbar.resize();
+}
+
+/**
+ * Handle a mouse-down on miniworkspace's resize corner.
+ * @param {!Event} e Mouse down event.
+ * @private
+ */
+Blockly.MiniWorkspace.prototype.resizeMouseDown_ = function(e) {
+  this.promote_();
+  Blockly.MiniWorkspace.unbindDragEvents_();
+  if (Blockly.isRightButton(e)) {
+    // Right-click.
+    return;
+  }
+  // Record the starting offset between the current location and the mouse.
+  if (Blockly.RTL) {
+    this.resizeDeltaWidth = this.width_ + e.clientX;
+  } else {
+    this.resizeDeltaWidth = this.width_ - e.clientX;
+  }
+  this.resizeDeltaHeight = this.height_ - e.clientY;
+
+  Blockly.MiniWorkspace.onMouseUpWrapper_ = Blockly.bindEvent_(document,
+      'mouseup', this, Blockly.MiniWorkspace.unbindDragEvents_);
+  Blockly.MiniWorkspace.onMouseMoveWrapper_ = Blockly.bindEvent_(document,
+      'mousemove', this, this.resizeMouseMove_);
+  Blockly.hideChaff();
+  // This event has been handled.  No need to bubble up to the document.
+  e.stopPropagation();
+};
+
+/**
+ * Resize this miniworkspace to follow the mouse.
+ * @param {!Event} e Mouse move event.
+ * @private
+ */
+Blockly.MiniWorkspace.prototype.resizeMouseMove_ = function(e) {
+  this.autoLayout_ = false;
+  var w = this.resizeDeltaWidth;
+  var h = this.resizeDeltaHeight + e.clientY;
+  if (Blockly.RTL) {
+    // RTL drags the bottom-left corner.
+    w -= e.clientX;
+  } else {
+    // LTR drags the bottom-right corner.
+    w += e.clientX;
+  }
+  this.resizeMiniWorkspace(h, w);
+  if (Blockly.RTL) {
+    // RTL requires the bubble to move its left edge.
+    //this.positionBubble_();
+  }
 };
 
 Blockly.MiniWorkspace.prototype.miniWorkspaceMouseDown_ = function (e) {

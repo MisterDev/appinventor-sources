@@ -105,32 +105,12 @@ Blockly.FolderIcon.prototype.setVisible = function(visible) {
           position.y += miniWorkspaceOrigin.y + parseInt(translate_[1]);
         }
         miniworkspace.setAnchorLocation(position.x + width + 10, position.y + 20);
-        //Set MW  Size
-        try {
-            var bBox = /** @type {SVGLocatable} */ (miniworkspace.svgBlockCanvas_).getBBox();
-        } catch (e) {
-            // Firefox has trouble with hidden elements (Bug 528969).
-            var bBox = {height: 0, width: 0};
-        }
-        miniworkspace.width_ = bBox.width + 2 * Blockly.Bubble.BORDER_WIDTH;
-        miniworkspace.height_ = bBox.height + 2 * Blockly.Bubble.BORDER_WIDTH;
-        var doubleBorderWidth = 2 * Blockly.Bubble.BORDER_WIDTH;
-        miniworkspace.width_ = Math.max(miniworkspace.width_, doubleBorderWidth + 45);
-        miniworkspace.height_ = Math.max(miniworkspace.height_, 30 + Blockly.BlockSvg.FIELD_HEIGHT);
-        miniworkspace.svgGroupBack_.setAttribute('width', miniworkspace.width_);
-        miniworkspace.svgGroupBack_.setAttribute('height', miniworkspace.height_+20);
-        miniworkspace.svgGroup_.setAttribute('width', miniworkspace.width_);
 
-
-        Blockly.fireUiEvent(miniworkspace.svgGroup_,'resize');
-
-        miniworkspace.positionMiniWorkspace_ ();
-        miniworkspace.scrollbar.resize();
-
-
-        miniworkspace.svgGroup_.setAttribute('display','block');
+        miniworkspace.svgGroup_.setAttribute('visibility','visible');
+        //Firefox has problems with hidden elements
+        miniworkspace.resizeMiniWorkspace(miniworkspace.height_, miniworkspace.width_);
     } else {
-        miniworkspace.svgGroup_.setAttribute('display','none');
+        miniworkspace.svgGroup_.setAttribute('visibility','hidden');
     }
 
     this.block_.expandedFolder_ = visible;
