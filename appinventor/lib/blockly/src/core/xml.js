@@ -51,6 +51,8 @@ Blockly.Xml.workspaceToDom = function(workspace) {
       var element = Blockly.Xml.blockToDom_(block);
       if (block.type == "folder") {
             var folder = Blockly.Xml.workspaceToDom(block.miniworkspace);
+            element.setAttribute('height', block.miniworkspace.height_);
+            element.setAttribute('width',block.miniworkspace.width_);
             for (var x = 0, b; b = folder.childNodes[x];){
                 element.appendChild(b);
             }
@@ -241,13 +243,6 @@ Blockly.Xml.domToWorkspace = function(workspace, xml) {
           xmlChild = xml.childNodes[x];
           if (xmlChild.nodeName.toLowerCase() == 'block') {
             var block = Blockly.Xml.domToBlock(workspace, xmlChild);
-            if (block.type == "folder") {
-              var folderXML = goog.dom.createDom('xml');
-              while(xmlChild.children.length > 0) {
-                folderXML.appendChild(xmlChild.children[0]);
-              }
-              block.miniworkspace.renderWorkspace(block, folderXML);
-            }
             var blockX = parseInt(xmlChild.getAttribute('x'), 10);
             var blockY = parseInt(xmlChild.getAttribute('y'), 10);
             if (!isNaN(blockX) && !isNaN(blockY)) {
@@ -388,6 +383,17 @@ Blockly.Xml.domToBlockInner = function(workspace, xmlBlock, opt_reuseBlock) {
   var editable = xmlBlock.getAttribute('editable');
   if (editable) {
     block.setEditable(editable == 'true');
+  }
+            
+  if (prototypeName == "folder" && !block.isInFlyout) {
+    var folderXML = goog.dom.createDom('xml');
+    while(xmlBlock.children.length > 0) {
+      folderXML.appendChild(xmlBlock.children[0]);
+    }
+    var height = parseInt(xmlBlock.getAttribute('height'), 10);
+    var width = parseInt(xmlBlock.getAttribute('width'), 10);
+
+    block.miniworkspace.renderWorkspace(block, folderXML, height, width);
   }
 
   var blockChild = null;
