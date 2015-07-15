@@ -341,7 +341,10 @@ Blockly.onMouseDown_ = function(e) {
 
   var isTargetSvg = e.target && e.target.nodeName &&
       e.target.nodeName.toLowerCase() == 'svg';
-  if (!Blockly.readOnly && Blockly.selected && isTargetSvg) {
+  var isTargetMiniWorkspace = e.target && e.target.nodeName &&
+      e.target.nodeName.toLowerCase() == 'rect' &&
+      e.target.getAttribute('class').toLowerCase() == 'blocklyfolderbackground';
+  if (!Blockly.readOnly && Blockly.selected && (isTargetSvg || isTargetMiniWorkspace)) {
     // Clicking on the document clears the selection.
     Blockly.selected.unselect();
   }
