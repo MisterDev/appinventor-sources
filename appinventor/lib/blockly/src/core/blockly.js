@@ -450,7 +450,7 @@ Blockly.onKeyDown_ = function(e) {
   } else if (e.altKey || e.ctrlKey || e.metaKey) {
     if (Blockly.selected &&
         Blockly.selected.isDeletable() && Blockly.selected.isMovable() &&
-        Blockly.selected.workspace == Blockly.mainWorkspace) {
+        (Blockly.selected.workspace == Blockly.mainWorkspace || Blockly.selected.isInFolder)) {
       Blockly.hideChaff();
       if (e.keyCode == 67) {
         // 'c' for copy.
@@ -464,7 +464,8 @@ Blockly.onKeyDown_ = function(e) {
     if (e.keyCode == 86) {
       // 'v' for paste.
       if (Blockly.clipboard_) {
-        Blockly.mainWorkspace.paste(Blockly.clipboard_);
+        //Blockly.mainWorkspace.paste(Blockly.clipboard_);
+        Blockly.clipboard_.workspace.paste(Blockly.clipboard_.xml);
       }
     }
   }
@@ -491,7 +492,8 @@ Blockly.copy_ = function(block) {
   var xy = block.getRelativeToSurfaceXY();
   xmlBlock.setAttribute('x', Blockly.RTL ? -xy.x : xy.x);
   xmlBlock.setAttribute('y', xy.y);
-  Blockly.clipboard_ = xmlBlock;
+  //Blockly.clipboard_ = xmlBlock;
+  Blockly.clipboard_ = {xml: xmlBlock, workspace: block.workspace};
 };
 
 /**

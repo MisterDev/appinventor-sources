@@ -49,14 +49,6 @@ Blockly.Xml.workspaceToDom = function(workspace) {
     // because getTopBlocks() returns also miniworkspaces's topBlocks_
     if(block.workspace == workspace){
       var element = Blockly.Xml.blockToDom_(block);
-      if (block.type == "folder") {
-            var folder = Blockly.Xml.workspaceToDom(block.miniworkspace);
-            element.setAttribute('height', block.miniworkspace.height_);
-            element.setAttribute('width',block.miniworkspace.width_);
-            for (var x = 0, b; b = folder.childNodes[x];){
-                element.appendChild(b);
-            }
-        }
       var xy = block.getRelativeToSurfaceXY();
       element.setAttribute('x', Blockly.RTL ? width - xy.x : xy.x);
       element.setAttribute('y', xy.y);
@@ -149,6 +141,14 @@ Blockly.Xml.blockToDom_ = function(block) {
     element.setAttribute('editable', false);
   }
 
+  if (block.type == "folder") {
+    var folder = Blockly.Xml.workspaceToDom(block.miniworkspace);
+    element.setAttribute('height', block.miniworkspace.height_);
+    element.setAttribute('width',block.miniworkspace.width_);
+    for (var x = 0, b; b = folder.childNodes[x];){
+      element.appendChild(b);
+    }
+  }
   var nextBlock = block.getNextBlock();
   if (nextBlock) {
     var container = goog.dom.createDom('next', null,
