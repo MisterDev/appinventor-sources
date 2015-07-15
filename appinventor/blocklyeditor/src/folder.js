@@ -282,8 +282,8 @@ Blockly.Folder.prototype.isOverFolder = function(e) {
     }
 };
 
-Blockly.Folder.prototype.isParentOf = function(folder) {
-    var current = folder.workspace.block_;
+Blockly.Folder.prototype.isAncestorOf = function(folder) {
+    var current = folder;
     while(current){
         if(current == this){
             return true;

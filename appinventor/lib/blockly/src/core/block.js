@@ -634,6 +634,7 @@ Blockly.Block.prototype.onMouseDown_ = function(e) {
     var xy = this.getRelativeToSurfaceXY();
     this.startDragX = xy.x;
     this.startDragY = xy.y;
+    this.startWorkspace = this.workspace;
     // Record the current mouse position.
     this.startDragMouseX = e.clientX;
     this.startDragMouseY = e.clientY;
@@ -677,9 +678,24 @@ Blockly.Block.prototype.onMouseUp_ = function(e) {
   Blockly.resetWorkspaceArrangements();
   Blockly.doCommand(function() {
     Blockly.terminateDrag_();
-
     if (Blockly.selectedFolder_) {
-      Blockly.selectedFolder_.miniworkspace.moveBlock(this_);
+      // If the miniworkspace is valid
+      if(Blockly.selectedFolder_.miniworkspace.isValid) {
+        Blockly.selectedFolder_.miniworkspace.moveBlock(this_);
+      } else {
+        var x = this_.startDragX ;
+        var y = this_.startDragY ;
+        this_.svg_.getRootElement().setAttribute('transform',
+          'translate(' + x + ', ' + y + ')');
+        if(this_.comment){
+          this_.comment.computeIconLocation();
+        }
+        // The block was in a miniworkspace
+        if(this_.startWorkspace != Blockly.mainWorkspace) {
+          this_.startWorkspace.moveBlock(this_);
+          this_.startWorkspace = null;
+        }
+      }
     }
 
 
@@ -1034,12 +1050,12 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
       //find the folder the block is over
       var overFolder = null;
       for (var i = 0; i < Blockly.ALL_FOLDERS.length; i++) {
-        if (this_ != Blockly.ALL_FOLDERS[i] &&
-            Blockly.ALL_FOLDERS[i].isOverFolder(e)) {
+        if (Blockly.ALL_FOLDERS[i].isOverFolder(e)) {
           overFolder = Blockly.ALL_FOLDERS[i];
           break;
         }
       }
+
       //remove highlighting if necessary
       if (Blockly.selectedFolder_ &&
           Blockly.selectedFolder_ != overFolder ) {
@@ -1047,10 +1063,11 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
         Blockly.selectedFolder_ = null;
       }
       //add highlighting if necessary
-      if (overFolder && overFolder != Blockly.selectedFolder_ &&
-          (this_.type != "folder" || (overFolder && !this_.isParentOf(overFolder)))) {
+      if (overFolder && overFolder != Blockly.selectedFolder_) {
         Blockly.selectedFolder_ = overFolder;
-        Blockly.selectedFolder_.miniworkspace.highlight_();
+        Blockly.selectedFolder_.miniworkspace.isValid = 
+          !(this_.type == "folder" && (overFolder && this_.isAncestorOf(overFolder)));
+        Blockly.selectedFolder_.miniworkspace.highlight_(Blockly.selectedFolder_.miniworkspace.isValid);
       }
 
       // Check to see if any of this block's connections are within range of

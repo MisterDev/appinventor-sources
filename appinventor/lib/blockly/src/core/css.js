@@ -110,6 +110,11 @@ Blockly.Css.CONTENT = [
   'stroke: #56a628;',
   '}',
 
+  '.blocklySelectedInvalidFolder {',
+  'stroke-width: 10px;',
+  'stroke: #f33;',
+  '}',
+
   '.blocklySelected>.blocklyPath {',
   '  stroke-width: 3px;',
   '  stroke: #fc3;',

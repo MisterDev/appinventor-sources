@@ -424,12 +424,22 @@ Blockly.MiniWorkspace.prototype.promote_ = function() {
     this.block_.promote();
 };
 
-Blockly.MiniWorkspace.prototype.highlight_ = function() {
-    Blockly.addClass_(/** @type {!Element} */ (this.svgGroupBack_),
-        'blocklySelectedFolder');
+Blockly.MiniWorkspace.prototype.highlight_ = function(valid) {
+    if(valid){
+        Blockly.addClass_(/** @type {!Element} */ (this.svgGroupBack_),
+            'blocklySelectedFolder');
+    } else {
+        Blockly.addClass_(/** @type {!Element} */ (this.svgGroupBack_),
+            'blocklySelectedInvalidFolder');        
+    }
 };
 
 Blockly.MiniWorkspace.prototype.unhighlight_ = function() {
-    Blockly.removeClass_(/** @type {!Element} */ (this.svgGroupBack_),
-        'blocklySelectedFolder');
+    if(this.isValid){
+        Blockly.removeClass_(/** @type {!Element} */ (this.svgGroupBack_),
+            'blocklySelectedFolder');
+    } else {
+        Blockly.removeClass_(/** @type {!Element} */ (this.svgGroupBack_),
+            'blocklySelectedInvalidFolder');
+    }
 };
