@@ -1026,32 +1026,38 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
       // Drag all the nested bubbles.
       for (var i = 0; i < this_.draggedBubbles_.length; i++) {
         var commentData = this_.draggedBubbles_[i];
-        commentData.bubble.setIconLocation(commentData.x + dx,
-            commentData.y + dy);
+        // [Devid] this desn't keep the bubble connected to the block while moving
+        // from a mini workspace to the mainWorkspace
+        //commentData.bubble.setIconLocation(commentData.x + dx,
+        //    commentData.y + dy);
+        commentData.bubble.computeIconLocation();
       }
-      //find the folder the block is over
-      var overFolder = null;
-      for (var i = 0; i < Blockly.ALL_FOLDERS.length; i++) {
-        if (Blockly.ALL_FOLDERS[i].isOverFolder(e)) {
-          overFolder = Blockly.ALL_FOLDERS[i];
-          break;
+      // [Devid] do only for block not in a mutator
+      if(this_.workspace == Blockly.mainWorkspace || this_.workspace.isMW){
+        //find the folder the block is over
+        var overFolder = null;
+        for (var i = 0; i < Blockly.ALL_FOLDERS.length; i++) {
+          console.log(this_);
+          if (Blockly.ALL_FOLDERS[i].isOverFolder(e)) {
+            overFolder = Blockly.ALL_FOLDERS[i];
+            break;
+          }
+        }
+
+        //remove highlighting if necessary
+        if (Blockly.selectedFolder_ &&
+            Blockly.selectedFolder_ != overFolder ) {
+          Blockly.selectedFolder_.miniworkspace.unhighlight_();
+          Blockly.selectedFolder_ = null;
+        }
+        //add highlighting if necessary
+        if (overFolder && overFolder != Blockly.selectedFolder_) {
+          Blockly.selectedFolder_ = overFolder;
+          Blockly.selectedFolder_.miniworkspace.isValid = 
+            !(this_.type == "folder" && (overFolder && this_.isAncestorOf(overFolder)));
+          Blockly.selectedFolder_.miniworkspace.highlight_(Blockly.selectedFolder_.miniworkspace.isValid);
         }
       }
-
-      //remove highlighting if necessary
-      if (Blockly.selectedFolder_ &&
-          Blockly.selectedFolder_ != overFolder ) {
-        Blockly.selectedFolder_.miniworkspace.unhighlight_();
-        Blockly.selectedFolder_ = null;
-      }
-      //add highlighting if necessary
-      if (overFolder && overFolder != Blockly.selectedFolder_) {
-        Blockly.selectedFolder_ = overFolder;
-        Blockly.selectedFolder_.miniworkspace.isValid = 
-          !(this_.type == "folder" && (overFolder && this_.isAncestorOf(overFolder)));
-        Blockly.selectedFolder_.miniworkspace.highlight_(Blockly.selectedFolder_.miniworkspace.isValid);
-      }
-
       // Check to see if any of this block's connections are within range of
       // another block's connection.
       var myConnections = this_.getConnections_(false);
