@@ -260,6 +260,8 @@ Blockly.createDom_ = function(container) {
   Blockly.mainWorkspace = new Blockly.Workspace(
       Blockly.getMainWorkspaceMetrics_,
       Blockly.setMainWorkspaceMetrics_);
+  // [Devid] Sets the mainWorkspace as focused workspace
+  Blockly.focusedWorkspace_ = Blockly.mainWorkspace;
   svg.appendChild(Blockly.mainWorkspace.createDom());
   Blockly.mainWorkspace.maxBlocks = Blockly.maxBlocks;
 
@@ -374,7 +376,14 @@ Blockly.init_ = function() {
   // out of bounds and released will know that it has been released.
   // Also, 'keydown' has to be on the whole document since the browser doesn't
   // understand a concept of focus on the SVG image.
-  Blockly.bindEvent_(Blockly.svg, 'mousedown', null, Blockly.onMouseDown_);
+
+  // [Devid] Sets the currently focused miniworkspace before handling the click
+  //Blockly.bindEvent_(Blockly.svg, 'mousedown', null, Blockly.onMouseDown_);
+  Blockly.bindEvent_(Blockly.svg, 'mousedown', null, 
+    function(e){
+      Blockly.focusedWorkspace_ = Blockly.mainWorkspace;
+      Blockly.onMouseDown_(e);
+    });
   Blockly.bindEvent_(Blockly.svg, 'mousemove', null, Blockly.onMouseMove_);
   Blockly.bindEvent_(Blockly.svg, 'contextmenu', null, Blockly.onContextMenu_);
   Blockly.bindEvent_(Blockly.WidgetDiv.DIV, 'contextmenu', null,

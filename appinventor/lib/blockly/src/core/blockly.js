@@ -210,6 +210,12 @@ Blockly.selected = null;
 Blockly.selectedFolder_ = null;
 
 /**
+ * Currently focused workspace.
+ *
+ */
+Blockly.focusedWorkspace_ = null;
+
+/**
  * Is Blockly in a read-only, non-editable mode?
  * Note that this property may only be set before init is called.
  * It can't be used to dynamically toggle editability on and off.
@@ -465,7 +471,16 @@ Blockly.onKeyDown_ = function(e) {
       // 'v' for paste.
       if (Blockly.clipboard_) {
         //Blockly.mainWorkspace.paste(Blockly.clipboard_);
-        Blockly.clipboard_.workspace.paste(Blockly.clipboard_.xml);
+        // [Devid] Paste to the focused workspace
+        // If the workspace is not the same of the copied block, sets default coordinates
+        if(Blockly.focusedWorkspace_ == Blockly.clipboard_.workspace){
+          Blockly.focusedWorkspace_.paste(Blockly.clipboard_.xml);
+        } else {
+          var xmlBlock = Blockly.clipboard_.xml.cloneNode(true);
+          xmlBlock.setAttribute('x', Blockly.RTL ? -25 : 25);
+          xmlBlock.setAttribute('y', 25);
+          Blockly.focusedWorkspace_.paste(xmlBlock);
+        }
       }
     }
   }
