@@ -387,8 +387,9 @@ Blockly.Xml.domToBlockInner = function(workspace, xmlBlock, opt_reuseBlock) {
             
   if (prototypeName == "folder" && !block.isInFlyout) {
     var folderXML = goog.dom.createDom('xml');
-    while(xmlBlock.children.length > 0) {
-      folderXML.appendChild(xmlBlock.children[0]);
+    // TODO children[0] is the field with the name
+    while(xmlBlock.children.length > 1) {
+      folderXML.appendChild(xmlBlock.children[1]);
     }
     var height = parseInt(xmlBlock.getAttribute('height'), 10);
     var width = parseInt(xmlBlock.getAttribute('width'), 10);
