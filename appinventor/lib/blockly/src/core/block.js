@@ -594,6 +594,7 @@ Blockly.Block.prototype.onMouseDown_ = function(e) {
   if (this.isInFlyout) {
     return;
   }
+
   // Update Blockly's knowledge of its own location.
   Blockly.svgResize();
   Blockly.terminateDrag_();
@@ -640,6 +641,15 @@ Blockly.Block.prototype.onMouseDown_ = function(e) {
         data.bubble = descendant.errorIcon;
         this.draggedBubbles_.push(data);
       }
+    }
+  }
+
+  // [Devid] If the block is in a miniworkspace or the main workspace
+  if(this.workspace == Blockly.mainWorkspace || this.workspace.isMW) {
+    if(this.type == 'folder' && this.expandedFolder_){
+      Blockly.focusedWorkspace_ = this.miniworkspace;
+    } else {
+      Blockly.focusedWorkspace_ = this.workspace;
     }
   }
   // This event has been handled.  No need to bubble up to the document.
@@ -1037,7 +1047,6 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
         //find the folder the block is over
         var overFolder = null;
         for (var i = 0; i < Blockly.ALL_FOLDERS.length; i++) {
-          console.log(this_);
           if (Blockly.ALL_FOLDERS[i].isOverFolder(e)) {
             overFolder = Blockly.ALL_FOLDERS[i];
             break;

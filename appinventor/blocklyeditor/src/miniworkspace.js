@@ -149,7 +149,7 @@ Blockly.MiniWorkspace.prototype.renderWorkspace = function (folder, xml, height,
 
     if (!Blockly.readOnly) {
         Blockly.bindEvent_(this.svgGroupBack_, 'mousedown', this,
-            this.miniWorkspaceMouseDown_);
+            this.miniWorkspaceHeaderMouseDown_);
         if (this.resizeGroup_) {
           Blockly.bindEvent_(this.resizeGroup_, 'mousedown', this,
                              this.resizeMouseDown_);
@@ -159,9 +159,9 @@ Blockly.MiniWorkspace.prototype.renderWorkspace = function (folder, xml, height,
 
 //TODO
 Blockly.MiniWorkspace.prototype.disposeWorkspace = function () {
-    for (var i = 1; i < 5; i++) {
+    /*for (var i = 1; i < 5; i++) {
         console.log(i+" "+this.connectionDBList[i].length);
-    }
+    }*/
 
     Blockly.MiniWorkspace.unbindDragEvents_();
     // Dispose of and unlink the bubble.
@@ -181,9 +181,9 @@ Blockly.MiniWorkspace.prototype.disposeWorkspace = function () {
     }
 };
 
-//MiniWorkspace cannot be resized - this can change in the future
 Blockly.MiniWorkspace.prototype.createDom_ = function () {
     this.svgGroup_ = Blockly.createSvgElement('g', {}, null);
+
     var svgGroupEmboss = Blockly.createSvgElement('g',
         {'filter': 'url(#blocklyEmboss)'}, this.svgGroup_);
 
@@ -191,11 +191,7 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
         {'height': Blockly.MiniWorkspace.DEFAULT_HEIGHT +'px', 'width': Blockly.MiniWorkspace.DEFAULT_WIDTH+'px'}, this.svgGroup_);
 
     this.svgBlockCanvas_ = Blockly.createSvgElement('g', {}, this.svgBlockCanvasOuter_);
-    /*Blockly.bindEvent_(this.svgBlockCanvas_, 'mousedown', this.svgBlockCanvas_,
-        function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        });*/
+    Blockly.bindEvent_(this.svgBlockCanvas_, 'mousedown', this, this.miniWorkspaceMouseDown_);
 
     Blockly.createSvgElement('rect',
         {'class': 'blocklyFolderBackground',
@@ -231,6 +227,7 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
             'y': 2 * Blockly.Icon.RADIUS - 4}, this.iconGroup_);
     iconMark_.appendChild(document.createTextNode("-"));
 
+    // Bottom right corner used to resize the miniworkspace
     this.resizeGroup_ = Blockly.createSvgElement('g',
         {'class': Blockly.RTL ? 'blocklyResizeSW' : 'blocklyResizeSE'},
         this.svgGroup_);
@@ -246,7 +243,7 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
         {'class': 'blocklyResizeLine',
         'x1': resizeSize * 2 / 3, 'y1': resizeSize - 1,
         'x2': resizeSize - 1, 'y2': resizeSize * 2 / 3}, this.resizeGroup_);
-    
+
     return this.svgGroup_;
 };
 
@@ -367,7 +364,7 @@ Blockly.MiniWorkspace.prototype.resizeMouseMove_ = function(e) {
   }
 };
 
-Blockly.MiniWorkspace.prototype.miniWorkspaceMouseDown_ = function (e) {
+Blockly.MiniWorkspace.prototype.miniWorkspaceHeaderMouseDown_ = function (e) {
     this.promote_();
     Blockly.MiniWorkspace.unbindDragEvents_();
     if (Blockly.isRightButton(e)) {
@@ -377,6 +374,7 @@ Blockly.MiniWorkspace.prototype.miniWorkspaceMouseDown_ = function (e) {
         // When focused on an HTML text input widget, don't trap any events.
         return;
     }
+    this.miniWorkspaceMouseDown_(e);
     // Left-click (or middle click)
     Blockly.setCursorHand_(true);
     // Record the starting offset between the current location and the mouse.
@@ -390,7 +388,29 @@ Blockly.MiniWorkspace.prototype.miniWorkspaceMouseDown_ = function (e) {
     Blockly.MiniWorkspace.onMouseUpWrapper_ = Blockly.bindEvent_(document,
         'mouseup', this, Blockly.MiniWorkspace.unbindDragEvents_);
     Blockly.MiniWorkspace.onMouseMoveWrapper_ = Blockly.bindEvent_(document,
-        'mousemove', this, this.MiniWorkspaceMouseMove_);
+        'mousemove', this, this.MiniWorkspaceHeaderMouseMove_);
+    // This event has been handled.  No need to bubble up to the document.
+    e.stopPropagation();
+};
+
+Blockly.MiniWorkspace.prototype.miniWorkspaceMouseDown_ = function (e) {
+    this.promote_();
+    Blockly.MiniWorkspace.unbindDragEvents_();
+    if (Blockly.isRightButton(e)) {
+        // Right-click.
+        return;
+    } else if (Blockly.isTargetInput_(e)) {
+        // When focused on an HTML text input widget, don't trap any events.
+        return;
+    }
+
+    Blockly.focusedWorkspace_ = this;
+    Blockly.onMouseDown_(e);
+    // Left-click (or middle click)
+    Blockly.setCursorHand_(true);
+
+    Blockly.MiniWorkspace.onMouseUpWrapper_ = Blockly.bindEvent_(document,
+        'mouseup', this, Blockly.MiniWorkspace.unbindDragEvents_);
     Blockly.hideChaff();
     // This event has been handled.  No need to bubble up to the document.
     e.stopPropagation();
@@ -407,7 +427,7 @@ Blockly.MiniWorkspace.unbindDragEvents_ = function() {
     }
 };
 
-Blockly.MiniWorkspace.prototype.MiniWorkspaceMouseMove_ = function(e) {
+Blockly.MiniWorkspace.prototype.MiniWorkspaceHeaderMouseMove_ = function(e) {
     this.autoLayout_ = false;
     if (Blockly.RTL) {
         this.relativeLeft_ = this.dragDeltaX - e.clientX;
