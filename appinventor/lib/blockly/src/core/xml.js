@@ -141,10 +141,12 @@ Blockly.Xml.blockToDom_ = function(block) {
     element.setAttribute('editable', false);
   }
 
+  // [Devid] Special case for folders
   if (block.type == "folder") {
     var folder = Blockly.Xml.workspaceToDom(block.miniworkspace);
-    element.setAttribute('height', block.miniworkspace.height_);
-    element.setAttribute('width',block.miniworkspace.width_);
+
+    element.setAttribute('height', block.miniworkspace.height_ - (2 * Blockly.Bubble.BORDER_WIDTH));
+    element.setAttribute('width', block.miniworkspace.width_ - (2 * Blockly.Bubble.BORDER_WIDTH));
     for (var x = 0, b; b = folder.childNodes[x];){
       element.appendChild(b);
     }

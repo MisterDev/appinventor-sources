@@ -293,13 +293,14 @@ Blockly.MiniWorkspace.prototype.resizeMiniWorkspace = function(height, width){
     this.svgBlockCanvasOuterBack_.setAttribute('width', width);
     this.svgBlockCanvasOuterBack_.setAttribute('height', height);
 
-    this.width_ = width + 2 * Blockly.Bubble.BORDER_WIDTH; 
-    this.height_ = height + 2 * Blockly.Bubble.BORDER_WIDTH;
+    this.width_ =  width + 2 * Blockly.Bubble.BORDER_WIDTH;
+    this.height_ =  height + 2 * Blockly.Bubble.BORDER_WIDTH;
     var doubleBorderWidth = 2 * Blockly.Bubble.BORDER_WIDTH;
     //this.width_ = Math.max(this.width_, doubleBorderWidth + 45);
     //this.height_ = Math.max(this.height_, 30 + Blockly.BlockSvg.FIELD_HEIGHT);
     this.svgGroupBack_.setAttribute('width', this.width_);
-    this.svgGroupBack_.setAttribute('height', this.height_+20);
+    //TODO constant for the header
+    this.svgGroupBack_.setAttribute('height', this.height_ + 20);
     //this.svgGroup_.setAttribute('width', this.width_);
     
     this.resizeGroup_.setAttribute('transform', 'translate(' +
