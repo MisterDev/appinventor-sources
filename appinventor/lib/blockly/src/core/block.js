@@ -1019,17 +1019,19 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
         this_.setDragging_(true);
       }
     }
-    // [Shirley 4/11] - everytime a block is clicked, it is put in the mainWorkspace
-    if (this_.workspace.isMW) {
-      var transformMatrix = Blockly.mainWorkspace.moveOutOfFolder(this_);
-      this_.startDragX += transformMatrix[0];
-      this_.startDragY += transformMatrix[1];
-    }
+
     if (Blockly.Block.dragMode_ == 2) {
+      // [Shirley 4/11] - everytime a block is clicked, it is put in the mainWorkspace
+      if (this_.workspace.isMW) {
+        var transformMatrix = Blockly.mainWorkspace.moveOutOfFolder(this_);
+        this_.startDragX += transformMatrix[0];
+        this_.startDragY += transformMatrix[1];
+      }
       // Unrestricted dragging.
       //  console.log("drag " + this_.startDragX+ " "+ this_.startDragY+ " "+dx+" "+dy);
       var x = this_.startDragX + dx;
       var y = this_.startDragY + dy;
+
         //console.log("drag2 "+x+" "+y);
       this_.svg_.getRootElement().setAttribute('transform',
           'translate(' + x + ', ' + y + ')');
