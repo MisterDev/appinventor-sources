@@ -382,7 +382,7 @@ Blockly.init_ = function() {
   Blockly.bindEvent_(Blockly.svg, 'mousedown', null, 
     function(e){
       Blockly.focusedWorkspace_ = Blockly.mainWorkspace;
-      Blockly.onMouseDown_(e);
+      Blockly.onMouseDown_.call(Blockly.mainWorkspace, e);
     });
   Blockly.bindEvent_(Blockly.svg, 'mousemove', null, Blockly.onMouseMove_);
   Blockly.bindEvent_(Blockly.svg, 'contextmenu', null, Blockly.onContextMenu_);
