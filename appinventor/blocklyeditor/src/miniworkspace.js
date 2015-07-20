@@ -40,8 +40,8 @@ Blockly.MiniWorkspace.prototype.relativeLeft_ = 0;
 Blockly.MiniWorkspace.prototype.relativeTop_ = 0;
 Blockly.MiniWorkspace.prototype.relativeLeft_ = 0;
 
-Blockly.MiniWorkspace.prototype.width_ = 0;
-Blockly.MiniWorkspace.prototype.height_ = 0;
+Blockly.MiniWorkspace.prototype.width_ = Blockly.MiniWorkspace.DEFAULT_WIDTH;
+Blockly.MiniWorkspace.prototype.height_ = Blockly.MiniWorkspace.DEFAULT_HEIGHT;
 
 Blockly.MiniWorkspace.prototype.autoLayout_ = true;
 
@@ -396,7 +396,7 @@ Blockly.MiniWorkspace.prototype.miniWorkspaceHeaderMouseDown_ = function (e) {
 
 Blockly.MiniWorkspace.prototype.miniWorkspaceMouseDown_ = function (e) {
     this.promote_();
-    Blockly.MiniWorkspace.unbindDragEvents_();
+    //Blockly.MiniWorkspace.unbindDragEvents_();
     if (Blockly.isRightButton(e)) {
         // Right-click.
         return;
@@ -406,13 +406,8 @@ Blockly.MiniWorkspace.prototype.miniWorkspaceMouseDown_ = function (e) {
     }
 
     Blockly.focusedWorkspace_ = this;
-    Blockly.onMouseDown_(e);
-    // Left-click (or middle click)
-    Blockly.setCursorHand_(true);
+    Blockly.onMouseDown_.call(this, e);
 
-    Blockly.MiniWorkspace.onMouseUpWrapper_ = Blockly.bindEvent_(document,
-        'mouseup', this, Blockly.MiniWorkspace.unbindDragEvents_);
-    Blockly.hideChaff();
     // This event has been handled.  No need to bubble up to the document.
     e.stopPropagation();
 };

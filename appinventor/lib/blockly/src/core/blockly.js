@@ -214,7 +214,11 @@ Blockly.selectedFolder_ = null;
  *
  */
 Blockly.focusedWorkspace_ = null;
-
+/**
+ * Currently clicked workspace.
+ *
+ */
+Blockly.clickedWorkspace_ = null;
 /**
  * Is Blockly in a read-only, non-editable mode?
  * Note that this property may only be set before init is called.
@@ -321,6 +325,7 @@ Blockly.latestClick = { x: 0, y: 0 };
  * @private
  */
 Blockly.onMouseDown_ = function(e) {
+  Blockly.clickedWorkspace_ = this;
   Blockly.latestClick = { x: e.clientX, y: e.clientY }; // Might be needed?
   Blockly.svgResize();
   Blockly.terminateDrag_();  // In case mouse-up event was lost.
@@ -331,7 +336,7 @@ Blockly.onMouseDown_ = function(e) {
   }
 
   //Closes mutators
-  var blocks = Blockly.mainWorkspace.getAllBlocks();
+  var blocks = Blockly.clickedWorkspace_.getAllBlocks();
   var numBlocks = blocks.length;
   var temp_block = null;
   for(var i =0; i<numBlocks; i++){
@@ -357,18 +362,18 @@ Blockly.onMouseDown_ = function(e) {
   if (e.target == Blockly.svg && Blockly.isRightButton(e)) {
     // Right-click.
     Blockly.showContextMenu_(e);
-  } else if ((Blockly.readOnly || isTargetSvg) &&
-             Blockly.mainWorkspace.scrollbar) {
+  } else if ((Blockly.readOnly || isTargetSvg || isTargetMiniWorkspace) &&
+             Blockly.clickedWorkspace_.scrollbar) {
     // If the workspace is editable, only allow dragging when gripping empty
     // space.  Otherwise, allow dragging when gripping anywhere.
-    Blockly.mainWorkspace.dragMode = true;
+    Blockly.clickedWorkspace_.dragMode = true;
     // Record the current mouse position.
-    Blockly.mainWorkspace.startDragMouseX = e.clientX;
-    Blockly.mainWorkspace.startDragMouseY = e.clientY;
-    Blockly.mainWorkspace.startDragMetrics =
-        Blockly.mainWorkspace.getMetrics();
-    Blockly.mainWorkspace.startScrollX = Blockly.mainWorkspace.scrollX;
-    Blockly.mainWorkspace.startScrollY = Blockly.mainWorkspace.scrollY;
+    Blockly.clickedWorkspace_.startDragMouseX = e.clientX;
+    Blockly.clickedWorkspace_.startDragMouseY = e.clientY;
+    Blockly.clickedWorkspace_.startDragMetrics =
+    Blockly.clickedWorkspace_.getMetrics();
+    Blockly.clickedWorkspace_.startScrollX = Blockly.clickedWorkspace_.scrollX;
+    Blockly.clickedWorkspace_.startScrollY = Blockly.clickedWorkspace_.scrollY;
 
     // If this is a touch event then bind to the mouseup so workspace drag mode
     // is turned off and double move events are not performed on a block.
@@ -388,13 +393,15 @@ Blockly.onMouseDown_ = function(e) {
  */
 Blockly.onMouseUp_ = function(e) {
   Blockly.setCursorHand_(false);
-  Blockly.mainWorkspace.dragMode = false;
-
+  if(Blockly.clickedWorkspace_){
+    Blockly.clickedWorkspace_.dragMode = false;
+  }
   // Unbind the touch event if it exists.
   if (Blockly.onTouchUpWrapper_) {
     Blockly.unbindEvent_(Blockly.onTouchUpWrapper_);
     Blockly.onTouchUpWrapper_ = null;
   }
+  Blockly.clickedWorkspace_ = null;
 };
 
 /**
@@ -403,13 +410,13 @@ Blockly.onMouseUp_ = function(e) {
  * @private
  */
 Blockly.onMouseMove_ = function(e) {
-  if (Blockly.mainWorkspace.dragMode) {
+  if (Blockly.clickedWorkspace_ && Blockly.clickedWorkspace_.dragMode) {
     Blockly.removeAllRanges();
-    var dx = e.clientX - Blockly.mainWorkspace.startDragMouseX;
-    var dy = e.clientY - Blockly.mainWorkspace.startDragMouseY;
-    var metrics = Blockly.mainWorkspace.startDragMetrics;
-    var x = Blockly.mainWorkspace.startScrollX + dx;
-    var y = Blockly.mainWorkspace.startScrollY + dy;
+    var dx = e.clientX - Blockly.clickedWorkspace_.startDragMouseX;
+    var dy = e.clientY - Blockly.clickedWorkspace_.startDragMouseY;
+    var metrics = Blockly.clickedWorkspace_.startDragMetrics;
+    var x = Blockly.clickedWorkspace_.startScrollX + dx;
+    var y = Blockly.clickedWorkspace_.startScrollY + dy;
     x = Math.min(x, -metrics.contentLeft);
     y = Math.min(y, -metrics.contentTop);
     x = Math.max(x, metrics.viewWidth - metrics.contentLeft -
@@ -418,7 +425,7 @@ Blockly.onMouseMove_ = function(e) {
                  metrics.contentHeight);
 
     // Move the scrollbars and the page will scroll automatically.
-    Blockly.mainWorkspace.scrollbar.set(-x - metrics.contentLeft,
+    Blockly.clickedWorkspace_.scrollbar.set(-x - metrics.contentLeft,
                                         -y - metrics.contentTop);
     e.stopPropagation();
   }
