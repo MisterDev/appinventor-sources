@@ -507,7 +507,9 @@ Blockly.Workspace.prototype.moveIntoFolder = function (block) {
   this.addTopBlock(block);
   //surgically removes all svg associated with block from old workspace canvas
   var svgGroup = goog.dom.removeNode(block.svg_.svgGroup_);
-  block.workspace = this;
+  block.workspace = newWorkspace;
+  // Changes the focused workspace 
+  Blockly.focusedWorkspace_ = newWorkspace;
   this.getCanvas().appendChild(svgGroup);
 
   var translate_ = this.getTranslate();
@@ -592,6 +594,8 @@ Blockly.Workspace.prototype.moveOutOfFolder = function (block) {
   //surgically removes all svg associated with block from old workspace canvas
   var svgGroup = goog.dom.removeNode(block.svg_.svgGroup_);
   block.workspace = newWorkspace;
+  // Changes the focused workspace 
+  Blockly.focusedWorkspace_ = newWorkspace;
   newWorkspace.getCanvas().appendChild(svgGroup);
 
   var translate_ = oldWorkspace.getTranslate();
