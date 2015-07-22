@@ -11,7 +11,6 @@ Blockly.Blocks['folder'] = {
         this.appendDummyInput()
             .appendField(new Blockly.FieldTextInput(name, Blockly.AIFolder.renameFolder), 'NAME');
             //.appendField(new Blockly.FieldTextBlockInput('FOLDER NAME'), 'TEXT');
-        //this.setMutator(new Blockly.Mutator(['procedures_mutatorarg']));
         this.setFolderIcon(new Blockly.FolderIcon());
     },
     decompose: function(workspace){
@@ -21,5 +20,9 @@ Blockly.Blocks['folder'] = {
         return this.getFieldValue('NAME');
     },
     compose: Blockly.compose,
-    typeblock: [{ translatedName: Blockly.Msg.LANG_FOLDERS_FOLDER }]
+    typeblock: [{ translatedName: Blockly.Msg.LANG_FOLDERS_FOLDER }],
+    onchange: function(){
+        // Spreads the 'blocklyWorkspaceChange' event to the miniworkspace
+        this.miniworkspace.fireChangeEvent();
+    }
 };
