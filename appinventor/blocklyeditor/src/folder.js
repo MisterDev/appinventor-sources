@@ -177,6 +177,18 @@ Blockly.Folder.prototype.getIcons = function() {
 };
 
 /**
+ * Change the field value for a folder (e.g. 'CHOOSE' or 'REMOVE').
+ * @param {string} newValue Value to be the new field.
+ * @param {string} name The name of the field.
+ */
+Blockly.Folder.prototype.setFieldValue = function(newValue, name) {
+  Blockly.Block.prototype.setFieldValue.call(this, newValue, name);
+  if(name.toLowerCase() == 'name'){
+    this.miniworkspace.updateTitle();
+  }
+};
+
+/**
  * Create and initialize the SVG representation of the block.
  */
 Blockly.Folder.prototype.initSvg = function() {

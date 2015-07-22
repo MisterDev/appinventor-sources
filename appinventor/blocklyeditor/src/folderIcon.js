@@ -112,6 +112,7 @@ Blockly.FolderIcon.prototype.setVisible = function(visible) {
             miniworkspace.width_ - 2 * Blockly.Bubble.BORDER_WIDTH);
         Blockly.focusedWorkspace_ = this.block_.miniworkspace;
 
+        miniworkspace.promote_();
     } else {
         miniworkspace.svgGroup_.setAttribute('visibility','hidden');
         Blockly.focusedWorkspace_ = Blockly.mainWorkspace;
