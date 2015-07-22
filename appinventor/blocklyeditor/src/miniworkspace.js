@@ -277,6 +277,27 @@ Blockly.MiniWorkspace.prototype.positionMiniWorkspace_ = function () {
         'translate(' + left + ', ' + top + ')');
 };
 
+Blockly.MiniWorkspace.prototype.updateTitle = function () {
+    this.svgTitle_.innerHTML = this.block_.getFolderName();
+    this.resizeTitle();
+};
+
+Blockly.MiniWorkspace.prototype.resizeTitle = function () {
+    var titleTranslate_ = this.svgTitle_.getAttribute("transform");
+    titleTranslate_ = titleTranslate_.split("(")[1].split(")")[0].split(",");
+
+    var headerWidth = this.svgBlockCanvas_.getBBox().width - 
+        parseInt(titleTranslate_[0]) - Blockly.Bubble.BORDER_WIDTH*2;
+    this.svgTitle_.innerHTML = this.block_.getFolderName();
+
+    while(this.svgTitle_.getBBox().width > headerWidth) {
+        this.svgTitle_.innerHTML = this.svgTitle_.innerHTML.slice(0, -1);
+    }
+    if(this.block_.getFolderName().length > this.svgTitle_.innerHTML.length) {
+        this.svgTitle_.innerHTML += '...';
+    }
+};
+
 Blockly.MiniWorkspace.prototype.resizeMiniWorkspace = function(height, width){
     if(!height){
         height = Blockly.MiniWorkspace.DEFAULT_HEIGHT;
@@ -306,7 +327,8 @@ Blockly.MiniWorkspace.prototype.resizeMiniWorkspace = function(height, width){
     this.resizeGroup_.setAttribute('transform', 'translate(' +
         (width - doubleBorderWidth) + ', ' +
         (height - doubleBorderWidth) + ')');
-
+    this.resizeTitle();
+    
     Blockly.fireUiEvent(this.svgGroup_,'resize');
 
     this.positionMiniWorkspace_ ();
