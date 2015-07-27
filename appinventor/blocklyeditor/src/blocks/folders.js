@@ -21,8 +21,8 @@ Blockly.Blocks['folder'] = {
     },
     compose: Blockly.compose,
     typeblock: [{ translatedName: Blockly.Msg.LANG_FOLDERS_FOLDER }],
-    onchange: function(){
+    onchange: function() {
         // Spreads the 'blocklyWorkspaceChange' event to the miniworkspace
-        this.miniworkspace.fireChangeEvent();
+        this.miniworkspace.spreadChangeEvent();
     }
 };
