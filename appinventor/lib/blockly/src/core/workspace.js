@@ -415,14 +415,17 @@ Blockly.Workspace.prototype.highlightBlock = function(id) {
  * a tree of blocks being deleted) are merged into one event.
  * Applications may hook workspace changes by listening for
  * 'blocklyWorkspaceChange' on Blockly.mainWorkspace.getCanvas().
+ * [Devid] This function fires the event only in the mainWorkspace
+ * and it is spread to the miniworkspaces calling Folder.spreadChangeEvent() 
  */
 Blockly.Workspace.prototype.fireChangeEvent = function() {
-  if (this.fireChangeEventPid_) {
-    window.clearTimeout(this.fireChangeEventPid_);
+  var workspace = Blockly.mainWorkspace;
+  if (workspace.fireChangeEventPid_) {
+    window.clearTimeout(workspace.fireChangeEventPid_);
   }
-  var canvas = this.svgBlockCanvas_;
+  var canvas = workspace.svgBlockCanvas_;
   if (canvas) {
-    this.fireChangeEventPid_ = window.setTimeout(function() {
+    workspace.fireChangeEventPid_ = window.setTimeout(function() {
         Blockly.fireUiEvent(canvas, 'blocklyWorkspaceChange');
       }, 0);
   }
