@@ -281,6 +281,12 @@ Blockly.MiniWorkspace.prototype.positionMiniWorkspace_ = function () {
         'translate(' + left + ', ' + top + ')');
 };
 
+Blockly.MiniWorkspace.prototype.getCoordinates = function(){
+    var x = this.anchorX_ + this.relativeLeft_;
+    var y = this.anchorY_ + this.relativeTop_;
+    return {'x': x, 'y':y};
+};
+
 Blockly.MiniWorkspace.prototype.updateTitle = function () {
     this.svgTitle_.innerHTML = this.block_.getFolderName();
     this.resizeTitle();
