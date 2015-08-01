@@ -477,7 +477,8 @@ Blockly.TypeBlock.createAutoComplete_ = function(inputText){
         var xmlBlock = xml.firstChild;
         if (xml.childNodes.length > 1 && goog.dom.getElement(inputText).value === 'make a list')
           xmlBlock = xml.childNodes[1];
-        block = Blockly.Xml.domToBlock(Blockly.mainWorkspace, xmlBlock);
+        // [Devid] Create the block in the focused workspace
+        block = Blockly.Xml.domToBlock(Blockly.focusedWorkspace_, xmlBlock);
 
         if (blockToCreate.dropDown.titleName && blockToCreate.dropDown.value){
           block.setTitleValue(blockToCreate.dropDown.value, blockToCreate.dropDown.titleName);
@@ -495,7 +496,7 @@ Blockly.TypeBlock.createAutoComplete_ = function(inputText){
       block.render();
       var blockSelected = Blockly.selected;
       var selectedX, selectedY, selectedXY;
-      if (blockSelected) {
+      if (blockSelected && blockSelected.type != 'folder') {
         selectedXY = blockSelected.getRelativeToSurfaceXY();
         selectedX = selectedXY.x;
         selectedY = selectedXY.y;
@@ -513,6 +514,13 @@ Blockly.TypeBlock.createAutoComplete_ = function(inputText){
             Blockly.latestClick.x;
         var top = Blockly.mainWorkspace.getMetrics().viewTop +
             Blockly.latestClick.y;
+
+        // [Devid] If the block is in a miniworkspace correct the coordinates
+        if(Blockly.focusedWorkspace_.isMW) {
+          var mwxy = Blockly.focusedWorkspace_.getCoordinates();
+          left -= mwxy.x - Blockly.focusedWorkspace_.getMetrics().viewLeft;
+          top -= mwxy.y - Blockly.focusedWorkspace_.getMetrics().viewTop;
+        }
         block.moveBy(left, top);
         block.select();
       }

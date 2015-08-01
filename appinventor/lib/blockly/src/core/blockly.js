@@ -211,14 +211,16 @@ Blockly.selectedFolder_ = null;
 
 /**
  * Currently focused workspace.
- *
+ * Used to paste blocks 
  */
 Blockly.focusedWorkspace_ = null;
+
 /**
  * Currently clicked workspace.
- *
+ * Used to scroll workspaces
  */
 Blockly.clickedWorkspace_ = null;
+
 /**
  * Is Blockly in a read-only, non-editable mode?
  * Note that this property may only be set before init is called.
