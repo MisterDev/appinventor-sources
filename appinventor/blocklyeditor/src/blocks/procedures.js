@@ -894,10 +894,14 @@ Blockly.Blocks['procedures_callnoreturn'] = {
     var option = {enabled: true};
     option.text = Blockly.Msg.LANG_PROCEDURES_HIGHLIGHT_DEF;
     var name = this.getFieldValue('PROCNAME');
-    var workspace = this.workspace;
+    // [Devid] var workspace = this.workspace;
     option.callback = function() {
-      var def = Blockly.Procedures.getDefinition(name, workspace);
+      var def = Blockly.Procedures.getDefinition(name, Blockly.mainWorkspace);
       def && def.select();
+      // [Devid] If the block is inside a collapsed folder, expands it
+      if(def && def.isInFolder && !def.workspace.block_.expandedFolder_) {
+        def.workspace.block_.folderIcon.setVisible(true);
+      }
     };
     options.push(option);
   },
