@@ -531,7 +531,7 @@ Blockly.Workspace.prototype.moveIntoFolder = function (block) {
     if(block.comment.bubble_){
       var svgGrup = goog.dom.removeNode(block.comment.bubble_.bubbleGroup_);
       block.comment.bubble_.workspace_ = newWorkspace;
-      newWorkspace.getCanvas().appendChild(svgGrup);
+      newWorkspace.getBubbleCanvas().appendChild(svgGrup);
     }
     block.comment.computeIconLocation();
   }
@@ -539,7 +539,7 @@ Blockly.Workspace.prototype.moveIntoFolder = function (block) {
     if(block.mutator.bubble_){
       var svgGrup = goog.dom.removeNode(block.mutator.bubble_.bubbleGroup_);
       block.mutator.bubble_.workspace_ = newWorkspace;
-      newWorkspace.getCanvas().appendChild(svgGrup);
+      newWorkspace.getBubbleCanvas().appendChild(svgGrup);
     }
     block.mutator.computeIconLocation();
   }
@@ -618,7 +618,7 @@ Blockly.Workspace.prototype.moveOutOfFolder = function (block) {
     if(block.comment.bubble_){
       var svgGrup = goog.dom.removeNode(block.comment.bubble_.bubbleGroup_);
       block.comment.bubble_.workspace_ = newWorkspace;
-      newWorkspace.getCanvas().appendChild(svgGrup);
+      newWorkspace.getBubbleCanvas().appendChild(svgGrup);
     }
     block.comment.computeIconLocation();
   }
@@ -626,7 +626,7 @@ Blockly.Workspace.prototype.moveOutOfFolder = function (block) {
     if(block.mutator.bubble_){
       var svgGrup = goog.dom.removeNode(block.mutator.bubble_.bubbleGroup_);
       block.mutator.bubble_.workspace_ = newWorkspace;
-      newWorkspace.getCanvas().appendChild(svgGrup);
+      newWorkspace.getBubbleCanvas().appendChild(svgGrup);
     }
     block.mutator.computeIconLocation();
   }
