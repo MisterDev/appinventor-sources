@@ -191,6 +191,7 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
         {'height': Blockly.MiniWorkspace.DEFAULT_HEIGHT +'px', 'width': Blockly.MiniWorkspace.DEFAULT_WIDTH+'px'}, this.svgGroup_);
 
     this.svgBlockCanvas_ = Blockly.createSvgElement('g', {}, this.svgBlockCanvasOuter_);
+
     Blockly.bindEvent_(this.svgBlockCanvas_, 'mousedown', this, this.miniWorkspaceMouseDown_);
     Blockly.bindEvent_(this.svgBlockCanvas_, 'blocklyWorkspaceChange', this,
       function(e) {
@@ -201,7 +202,7 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
         {'class': 'blocklyFolderBackground',
             'height': '100%', 'width': '100%'}, this.svgBlockCanvas_);
 
-    this.svgBubbleCanvas_ = Blockly.createSvgElement('g', {'height': '100%', 'width': '100%'}, this.svgGroup_);
+    this.svgBubbleCanvas_ = Blockly.createSvgElement('g', {'height': '100%', 'width': '100%'}, this.svgBlockCanvasOuter_);
     this.svgGroupBack_ = Blockly.createSvgElement('rect',
         {'class': 'blocklyDraggable', 'x': 0, 'y': 0,
             'rx': Blockly.Bubble.BORDER_WIDTH, 'ry': Blockly.Bubble.BORDER_WIDTH},
