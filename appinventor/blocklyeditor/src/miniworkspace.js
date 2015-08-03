@@ -108,7 +108,11 @@ Blockly.MiniWorkspace.setWorkspaceMetrics_ = function(xyRatio) {
     var translation = 'translate(' +
         (this.scrollX + metrics.absoluteLeft) + ',' +
         (this.scrollY + metrics.absoluteTop) + ')';
+    var inverseTranslation = 'translate(' +
+        (-(this.scrollX + metrics.absoluteLeft)) + ',' +
+        (-(this.scrollY + metrics.absoluteTop)) + ')';
     this.getCanvas().setAttribute('transform', translation);
+    this.svgFolderBackground_.setAttribute('transform', inverseTranslation);
     this.getBubbleCanvas().setAttribute('transform',
         translation);
 };
@@ -198,7 +202,7 @@ Blockly.MiniWorkspace.prototype.createDom_ = function () {
         e.stopPropagation();
     });
 
-    Blockly.createSvgElement('rect',
+    this.svgFolderBackground_ = Blockly.createSvgElement('rect',
         {'class': 'blocklyFolderBackground',
             'height': '100%', 'width': '100%'}, this.svgBlockCanvas_);
 
