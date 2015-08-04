@@ -480,16 +480,14 @@ Blockly.onKeyDown_ = function(e) {
       // 'v' for paste.
       if (Blockly.clipboard_) {
         //Blockly.mainWorkspace.paste(Blockly.clipboard_);
-        // [Devid] Paste to the focused workspace
-        // If the workspace is not the same of the copied block, sets default coordinates
-        if(Blockly.focusedWorkspace_ == Blockly.clipboard_.workspace){
-          Blockly.focusedWorkspace_.paste(Blockly.clipboard_.xml);
-        } else {
-          var xmlBlock = Blockly.clipboard_.xml.cloneNode(true);
-          xmlBlock.setAttribute('x', Blockly.RTL ? -25 : 25);
-          xmlBlock.setAttribute('y', 25);
-          Blockly.focusedWorkspace_.paste(xmlBlock);
-        }
+        // [Devid] Paste into the focused workspace, always in a visible position
+        var xmlBlock = Blockly.clipboard_.xml.cloneNode(true);
+        var metrics = Blockly.focusedWorkspace_.getMetrics();
+        xmlBlock.setAttribute('x', Blockly.RTL ? -x : x);
+        xmlBlock.setAttribute('y', y);
+        var x = 25 + metrics.viewLeft;
+        var y = 25 + metrics.viewTop;
+        Blockly.focusedWorkspace_.paste(xmlBlock);
       }
     }
   }
