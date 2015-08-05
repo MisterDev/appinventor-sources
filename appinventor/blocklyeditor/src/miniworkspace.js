@@ -168,6 +168,9 @@ Blockly.MiniWorkspace.prototype.disposeWorkspace = function () {
     }*/
 
     Blockly.MiniWorkspace.unbindDragEvents_();
+    while (this.topBlocks_.length > 0) {
+        this.topBlocks_[0].dispose();
+    }
     // Dispose of and unlink the bubble.
     goog.dom.removeNode(this.svgGroup_);
     this.svgGroup_ = null;
@@ -179,10 +182,6 @@ Blockly.MiniWorkspace.prototype.disposeWorkspace = function () {
     this.content_ = null;
     this.shape_ = null;
     this.block_.expandedFolder_ = false;
-
-    while (this.topBlocks_.length > 0) {
-        this.topBlocks_[0].dispose();
-    }
 };
 
 Blockly.MiniWorkspace.prototype.createDom_ = function () {
