@@ -285,6 +285,20 @@ Blockly.MiniWorkspace.prototype.positionMiniWorkspace_ = function () {
         'translate(' + left + ', ' + top + ')');
 };
 
+Blockly.MiniWorkspace.prototype.moveNearPseudoBlock = function() {
+    // Creates the bubble.        
+    var width = this.block_.getHeightWidth().width;
+    var position = this.block_.getRelativeToSurfaceXY();
+    //Calculates the right coordinates if the folder block is inside a miniworkspace
+    if(this.block_.isInFolder){
+        var miniWorkspaceOrigin = Blockly.getRelativeXY_(this.block_.workspace.svgGroup_);
+        var translate_ = this.block_.workspace.getTranslate();
+        position.x += miniWorkspaceOrigin.x + parseInt(translate_[0]);
+        position.y += miniWorkspaceOrigin.y + parseInt(translate_[1]);
+    }
+    this.setAnchorLocation(position.x + width + 10, position.y + 20);
+};
+
 Blockly.MiniWorkspace.prototype.getCoordinates = function(){
     var x = this.anchorX_ + this.relativeLeft_;
     var y = this.anchorY_ + this.relativeTop_;
