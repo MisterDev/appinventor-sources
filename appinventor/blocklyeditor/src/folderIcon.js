@@ -94,17 +94,7 @@ Blockly.FolderIcon.prototype.setVisible = function(visible) {
     }
 
     if (visible) {
-        // Create the bubble.        
-        var width = this.block_.getHeightWidth().width;
-        var position = this.block_.getRelativeToSurfaceXY();
-        //Calculates the right coordinates if the folder block is inside a miniworkspace
-        if(this.block_.isInFolder){
-          var miniWorkspaceOrigin = Blockly.getRelativeXY_(this.block_.workspace.svgGroup_);
-          var translate_ = this.block_.workspace.getTranslate();
-          position.x += miniWorkspaceOrigin.x + parseInt(translate_[0]);
-          position.y += miniWorkspaceOrigin.y + parseInt(translate_[1]);
-        }
-        miniworkspace.setAnchorLocation(position.x + width + 10, position.y + 20);
+        miniworkspace.moveNearPseudoBlock();
 
         miniworkspace.svgGroup_.setAttribute('visibility','visible');
         //TODO Firefox has problems with hidden elements
