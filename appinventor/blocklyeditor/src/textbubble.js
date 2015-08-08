@@ -96,9 +96,11 @@ Blockly.TextBubble.prototype.createEditor_ = function() {
     this.foreignObject_ = Blockly.createSvgElement('foreignObject',
         {'x': Blockly.Bubble.BORDER_WIDTH, 'y': Blockly.Bubble.BORDER_WIDTH},
         null);
-    var body = document.createElementNS(Blockly.HTML_NS, 'body');
-    body.setAttribute('xmlns', Blockly.HTML_NS);
-    body.className = 'blocklyMinimalBody';
+    this.foreignBody_ = document.createElementNS(Blockly.HTML_NS, 'body');
+    this.foreignBody_.setAttribute('xmlns', Blockly.HTML_NS);
+    this.foreignBody_.className = 'blocklyMinimalBody';
+
+    this.buttons_ = document.createElementNS(Blockly.HTML_NS, 'div');
 
     //close button
     this.closeButton_ = document.createElementNS(Blockly.HTML_NS, 'button');
@@ -111,31 +113,31 @@ Blockly.TextBubble.prototype.createEditor_ = function() {
     } else {
         this.closeButton_.appendChild(document.createTextNode('Remove Comment'));
     }
-    body.appendChild(this.closeButton_);
+    this.buttons_.appendChild(this.closeButton_);
     Blockly.bindEvent_(this.closeButton_, 'mouseup', this, this.closeButtonClick_);  //emery
 
     //hide button
     this.hideButton_ = document.createElementNS(Blockly.HTML_NS, 'button');
     this.hideButton_.appendChild(document.createTextNode('Hide'));
-    body.appendChild(this.hideButton_);
+    this.buttons_.appendChild(this.hideButton_);
     Blockly.bindEvent_(this.hideButton_, 'mouseup', this, Blockly.Icon.prototype.iconClick_ );
 
     //clear button
     this.clearButton_ = document.createElementNS(Blockly.HTML_NS, 'button');
     this.clearButton_.appendChild(document.createTextNode('Clear'));
-    body.appendChild(this.clearButton_);
+    this.buttons_.appendChild(this.clearButton_);
     Blockly.bindEvent_(this.clearButton_, 'mouseup', this, this.clearButtonClick_);  //emery
 
     //toggle watch button
     if (this.iconChar == Blockly.BlocklyEditor.watchChar) {
         this.toggleButton_ = document.createElementNS(Blockly.HTML_NS, 'button');
         this.toggleButton_.appendChild(document.createTextNode('Turn Watch Off'));
-        body.appendChild(this.toggleButton_);
+        this.buttons_.appendChild(this.toggleButton_);
         Blockly.bindEvent_(this.toggleButton_, 'mouseup', this, this.toggleButtonClick_);  //emery
 
         this.orderButton_ = document.createElementNS(Blockly.HTML_NS, 'button');
         this.orderButton_.appendChild(document.createTextNode('Print From Bottom'));
-        body.appendChild(this.orderButton_);
+        this.buttons_.appendChild(this.orderButton_);
         Blockly.bindEvent_(this.orderButton_, 'mouseup', this, this.orderButtonClick_);
         this.myblock.order = true;
     }
@@ -144,7 +146,7 @@ Blockly.TextBubble.prototype.createEditor_ = function() {
     if (this.iconChar == Blockly.BlocklyEditor.doitChar) {
         this.doitButton_ = document.createElementNS(Blockly.HTML_NS, 'button');
         this.doitButton_.appendChild(document.createTextNode('Do It Again'));
-        body.appendChild(this.doitButton_);
+        this.buttons_.appendChild(this.doitButton_);
         Blockly.bindEvent_(this.doitButton_, 'mouseup', this, this.doitAgainButtonClick_);  //emery
     }
 
@@ -152,15 +154,16 @@ Blockly.TextBubble.prototype.createEditor_ = function() {
     if (this.iconChar == Blockly.BlocklyEditor.yailChar) {
         this.yailButton_ = document.createElementNS(Blockly.HTML_NS, 'button');
         this.yailButton_.appendChild(document.createTextNode('Regenerate'));
-        body.appendChild(this.yailButton_);
+        this.buttons_.appendChild(this.yailButton_);
         Blockly.bindEvent_(this.yailButton_, 'mouseup', this, this.yailButtonClick_);
     }
 
     this.textarea_ = document.createElementNS(Blockly.HTML_NS, 'textarea');
     this.textarea_.className = 'blocklyCommentTextarea';
     this.textarea_.setAttribute('dir', Blockly.RTL ? 'RTL' : 'LTR');
-    body.appendChild(this.textarea_);
-    this.foreignObject_.appendChild(body);
+    this.foreignBody_.appendChild(this.buttons_);
+    this.foreignBody_.appendChild(this.textarea_);
+    this.foreignObject_.appendChild(this.foreignBody_);
     Blockly.bindEvent_(this.textarea_, 'mouseup', this, this.textareaFocus_);
     return this.foreignObject_;
 };
@@ -282,12 +285,13 @@ Blockly.TextBubble.prototype.updateEditable = function() {
  * @private
  */
 Blockly.TextBubble.prototype.resizeBubble_ = function() {
-    var size = this.bubble_.getBubbleSize();
-    var doubleBorderWidth = 2 * Blockly.Bubble.BORDER_WIDTH;
-    this.foreignObject_.setAttribute('width', size.width - doubleBorderWidth);
-    this.foreignObject_.setAttribute('height', size.height - doubleBorderWidth);
-    this.textarea_.style.width = (size.width - doubleBorderWidth - 4) + 'px';
-    this.textarea_.style.height = (size.height - doubleBorderWidth - 4) + 'px';
+  var size = this.bubble_.getBubbleSize();
+  var doubleBorderWidth = 2 * Blockly.Bubble.BORDER_WIDTH;
+  this.foreignObject_.setAttribute('width', size.width - doubleBorderWidth);
+  this.foreignObject_.setAttribute('height', size.height - doubleBorderWidth);
+  this.foreignBody_.style.height = (size.height - doubleBorderWidth) + 'px';
+  this.textarea_.style.width = (size.width - doubleBorderWidth) + 'px';
+  this.textarea_.style.height = (size.height - this.buttons_.offsetHeight - doubleBorderWidth) + 'px';
 };
 
 /**
