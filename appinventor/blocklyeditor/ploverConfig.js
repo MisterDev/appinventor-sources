@@ -61,7 +61,8 @@
     '../lib/blockly/src/core/xml.js',
     '../lib/blockly/src/core/typeblock.js',
 
-    //finally, include any of our own .js file in any orde
+    //finally, include any of our own .js file in any order
+    "./src/textbubble.js",
     "./src/blocklyeditor.js",
     "./src/blockColors.js",
     "./src/translation_properties.js",
@@ -87,6 +88,7 @@
     "./src/nameSet.js",
     "./src/substitution.js",
     "./src/language_switch.js",
+
 
     //blocks files
     './src/blocks/control.js',

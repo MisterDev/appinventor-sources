@@ -52,7 +52,8 @@ public class ReplApplication extends Application {
   }
 
   public static void reportError(Throwable ex) {
-    if (thisInstance != null && thisInstance.active)
+    if (thisInstance != null && thisInstance.active) {
       ACRA.getErrorReporter().handleException(ex);
+    }
   }
 }
