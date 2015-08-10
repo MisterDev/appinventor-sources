@@ -527,14 +527,30 @@ Blockly.Workspace.prototype.moveIntoFolder = function (block) {
       'translate(' + x + ', ' + y + ')');
 
   moveConnections(block);
+
   if(block.comment){
     if(block.comment.bubble_){
       var svgGrup = goog.dom.removeNode(block.comment.bubble_.bubbleGroup_);
       block.comment.bubble_.workspace_ = newWorkspace;
       newWorkspace.getBubbleCanvas().appendChild(svgGrup);
     }
+    console.log(block.comment);
     block.comment.computeIconLocation();
   }
+
+  var textBubbleKeys = Object.keys(block.textBubbles);
+  for (var i = 0, key; key = textBubbleKeys[i]; i++) {
+    var bubble = block.textBubbles[key];
+    if(bubble){
+      if(bubble.bubble_){
+        var svgGrup = goog.dom.removeNode(bubble.bubble_.bubbleGroup_);
+        bubble.bubble_.workspace_ = newWorkspace;
+        newWorkspace.getCanvas().appendChild(svgGrup);
+      }
+      bubble.computeIconLocation();
+    }
+  }
+
   if(block.mutator){
     if(block.mutator.bubble_){
       var svgGrup = goog.dom.removeNode(block.mutator.bubble_.bubbleGroup_);
@@ -614,6 +630,7 @@ Blockly.Workspace.prototype.moveOutOfFolder = function (block) {
   block.isInFolder = false;
   
   moveConnections(block);
+
   if(block.comment){
     if(block.comment.bubble_){
       var svgGrup = goog.dom.removeNode(block.comment.bubble_.bubbleGroup_);
@@ -622,6 +639,20 @@ Blockly.Workspace.prototype.moveOutOfFolder = function (block) {
     }
     block.comment.computeIconLocation();
   }
+
+  var textBubbleKeys = Object.keys(block.textBubbles);
+  for (var i = 0, key; key = textBubbleKeys[i]; i++) {
+    var bubble = block.textBubbles[key];
+    if(bubble){
+      if(bubble.bubble_){
+        var svgGrup = goog.dom.removeNode(bubble.bubble_.bubbleGroup_);
+        bubble.bubble_.workspace_ = newWorkspace;
+        newWorkspace.getCanvas().appendChild(svgGrup);
+      }
+      bubble.computeIconLocation();
+    }
+  }
+
   if(block.mutator){
     if(block.mutator.bubble_){
       var svgGrup = goog.dom.removeNode(block.mutator.bubble_.bubbleGroup_);
