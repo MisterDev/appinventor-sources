@@ -497,9 +497,14 @@ public interface Images extends Resources {
   ImageResource yandex();
 
   /**
+   * Designer palette item: Folder
+   */
+    @Source("com/google/appinventor/images/folders.png")
+    ImageResource folders();
+
+  /**
    * Designer palette item: proximitysensor component
    */
   @Source("com/google/appinventor/images/proximitysensor.png")
   ImageResource proximitysensor();
-
 }

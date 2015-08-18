@@ -372,6 +372,10 @@ Blockly.Block.prototype.isBadBlock = function() {
  */
 Blockly.Block.prototype.dispose = function(healStack, animate,
                                            dontRemoveFromWorkspace) {
+  if (this.type == "folder") {
+    this.miniworkspace.dispose();
+  }
+
   // Switch off rerendering.
   this.rendered = false;
   this.unplug(healStack);
@@ -591,6 +595,7 @@ Blockly.Block.prototype.onMouseDown_ = function(e) {
   // Update Blockly's knowledge of its own location.
   Blockly.svgResize();
   Blockly.terminateDrag_();
+
   this.select();
   Blockly.hideChaff();
   if (Blockly.isRightButton(e)) {
@@ -652,6 +657,12 @@ Blockly.Block.prototype.onMouseUp_ = function(e) {
   Blockly.resetWorkspaceArrangements();
   Blockly.doCommand(function() {
     Blockly.terminateDrag_();
+
+    if (Blockly.selectedFolder_) {
+      Blockly.selectedFolder_.miniworkspace.moveBlock(this_);
+    }
+
+
     if (Blockly.selected && Blockly.highlightedConnection_) {
       // Connect two blocks together.
       Blockly.localConnection_.connect(Blockly.highlightedConnection_);
@@ -681,10 +692,17 @@ Blockly.Block.prototype.onMouseUp_ = function(e) {
       // now that the block has been deleted.
       Blockly.fireUiEvent(window, 'resize');
     }
+
     if (Blockly.highlightedConnection_) {
       Blockly.highlightedConnection_.unhighlight();
       Blockly.highlightedConnection_ = null;
     }
+
+    if (Blockly.selectedFolder_) {
+      Blockly.selectedFolder_.miniworkspace.unhighlight_();
+      Blockly.selectedFolder_ = null;
+    }
+
   });
   if (! Blockly.Instrument.avoidRenderWorkspaceInMouseUp) {
     // [lyn, 04/01/14] rendering a workspace takes a *long* time and is *not* necessary!
@@ -973,10 +991,18 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
         this_.setDragging_(true);
       }
     }
+    // [Shirley 4/11] - everytime a block is clicked, it is put in the mainWorkspace
+    if (this_.workspace.isMW) {
+      var transformMatrix = Blockly.mainWorkspace.moveOutOfFolder(this_);
+      this_.startDragX += transformMatrix[0];
+      this_.startDragY += transformMatrix[1];
+    }
     if (Blockly.Block.dragMode_ == 2) {
       // Unrestricted dragging.
+      //  console.log("drag " + this_.startDragX+ " "+ this_.startDragY+ " "+dx+" "+dy);
       var x = this_.startDragX + dx;
       var y = this_.startDragY + dy;
+        //console.log("drag2 "+x+" "+y);
       this_.svg_.getRootElement().setAttribute('transform',
           'translate(' + x + ', ' + y + ')');
       // Drag all the nested bubbles.
@@ -984,6 +1010,27 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
         var commentData = this_.draggedBubbles_[i];
         commentData.bubble.setIconLocation(commentData.x + dx,
             commentData.y + dy);
+      }
+
+      //find the folder the block is over
+      var overFolder = null;
+      for (var i = 0; i < Blockly.ALL_FOLDERS.length; i++) {
+        if (this_ != Blockly.ALL_FOLDERS[i] &&
+            Blockly.ALL_FOLDERS[i].isOverFolder(e)) {
+          overFolder = Blockly.ALL_FOLDERS[i];
+          break;
+        }
+      }
+      //remove highlighting if necessary
+      if (Blockly.selectedFolder_ &&
+          Blockly.selectedFolder_ != overFolder) {
+        Blockly.selectedFolder_.miniworkspace.unhighlight_();
+        Blockly.selectedFolder_ = null;
+      }
+      //add highlighting if necessary
+      if (overFolder && overFolder != Blockly.selectedFolder_) {
+        Blockly.selectedFolder_ = overFolder;
+        Blockly.selectedFolder_.miniworkspace.highlight_();
       }
 
       // Check to see if any of this block's connections are within range of
@@ -994,7 +1041,7 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
       var radiusConnection = Blockly.SNAP_RADIUS;
       for (var i = 0; i < myConnections.length; i++) {
         var myConnection = myConnections[i];
-        var neighbour = myConnection.closest(radiusConnection, dx, dy);
+        var neighbour = myConnection.closest(radiusConnection, dx, dy, Blockly.selectedFolder_);
         if (neighbour.connection) {
           closestConnection = neighbour.connection;
           localConnection = myConnection;
@@ -1009,6 +1056,7 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
         Blockly.highlightedConnection_ = null;
         Blockly.localConnection_ = null;
       }
+
       // Add connection highlighting if needed.
       if (closestConnection &&
           closestConnection != Blockly.highlightedConnection_) {
@@ -1016,6 +1064,8 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
         Blockly.highlightedConnection_ = closestConnection;
         Blockly.localConnection_ = localConnection;
       }
+
+
       // Flip the trash can lid if needed.
       if (this_.workspace.trashcan && this_.isDeletable()) {
         this_.workspace.trashcan.onMouseMove(e);

@@ -31,12 +31,19 @@
   stroke-width: 2;
   stroke-linecap: round;
 }
+.blocklySelectedFolder {
+    stroke-width: 10px;
+    stroke: #f33;
+}
 .blocklySelected>.blocklyPath {
   stroke-width: 3px;
   stroke: #fc3;
 }
 .blocklySelected>.blocklyPathLight {
   display: none;
+}
+.blocklyDragging {
+  z-index: 1000;
 }
 .blocklyDragging>.blocklyPath, .blocklyDragging>.blocklyPathLight {
   fill-opacity: .8;
@@ -132,6 +139,9 @@
   font-size: 11pt;
   border: none;
   outline: none;
+}
+.blocklyFolderBackground {
+    fill: rgba(1,1,1,0);
 }
 .blocklyContextMenuBackground, .blocklyMutatorBackground {
   fill: #fff;

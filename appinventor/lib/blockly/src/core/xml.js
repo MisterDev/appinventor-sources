@@ -46,6 +46,12 @@ Blockly.Xml.workspaceToDom = function(workspace) {
   var blocks = workspace.getTopBlocks(true);
   for (var i = 0, block; block = blocks[i]; i++) {
     var element = Blockly.Xml.blockToDom_(block);
+      if (block.type == "folder") {
+          var folder = Blockly.Xml.workspaceToDom(block.miniworkspace);
+          for (var x = 0, b; b = folder.childNodes[x];){
+              element.appendChild(b);
+          }
+      }
     var xy = block.getRelativeToSurfaceXY();
     element.setAttribute('x', Blockly.RTL ? width - xy.x : xy.x);
     element.setAttribute('y', xy.y);
@@ -231,6 +237,13 @@ Blockly.Xml.domToWorkspace = function(workspace, xml) {
           xmlChild = xml.childNodes[x];
           if (xmlChild.nodeName.toLowerCase() == 'block') {
             var block = Blockly.Xml.domToBlock(workspace, xmlChild);
+              if (block.type == "folder") {
+                  var folderXML = goog.dom.createDom('xml');
+                  while(xmlChild.children.length > 0) {
+                      folderXML.appendChild(xmlChild.children[0]);
+                  }
+                  block.miniworkspace.xml = folderXML;
+              }
             var blockX = parseInt(xmlChild.getAttribute('x'), 10);
             var blockY = parseInt(xmlChild.getAttribute('y'), 10);
             if (!isNaN(blockX) && !isNaN(blockY)) {
@@ -341,7 +354,12 @@ Blockly.Xml.domToBlockInner = function(workspace, xmlBlock, opt_reuseBlock) {
     block.fill(workspace, prototypeName);
     block.parent_ = parentBlock;
   } else {
-    block = Blockly.Block.obtain(workspace, prototypeName);
+      if (prototypeName == "folder") {
+        //here block is actually a Blockly.Folder() instance
+        block = Blockly.Folder.obtain(workspace,prototypeName);
+      } else {
+        block = Blockly.Block.obtain(workspace, prototypeName);
+      }
   }
   if (!block.svg_) {
     block.initSvg();

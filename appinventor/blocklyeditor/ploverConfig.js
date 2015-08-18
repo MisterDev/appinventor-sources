@@ -87,6 +87,10 @@
     "./src/nameSet.js",
     "./src/substitution.js",
     "./src/language_switch.js",
+    "./src/folder.js",
+    "./src/folder_svg.js",
+    "./src/miniworkspace.js",
+    "./src/folderIcon.js",
 
     //blocks files
     './src/blocks/control.js',
@@ -99,6 +103,7 @@
     './src/blocks/lexical-variables.js',
     './src/blocks/colors.js',
     './src/blocks/components.js',
+    './src/blocks/folders.js',
 
     //generator files
     "./src/generators/yail.js",

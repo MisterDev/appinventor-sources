@@ -329,6 +329,9 @@ Blockly.Connection.prototype.moveTo = function(x, y) {
   this.x_ = x;
   this.y_ = y;
   // Insert it into its new location in the database.
+    if (!this.dbList_) {
+        this.dbList_ = this.sourceBlock_.workspace.workspace_.connectionDBList;
+    }
   this.dbList_[this.type].addConnection_(this);
 };
 
@@ -406,7 +409,7 @@ Blockly.Connection.prototype.tighten_ = function() {
  * @return {!Object} Contains two properties: 'connection' which is either
  *     another connection or null, and 'radius' which is the distance.
  */
-Blockly.Connection.prototype.closest = function(maxLimit, dx, dy) {
+Blockly.Connection.prototype.closest = function(maxLimit, dx, dy, folder) {
   if (this.targetConnection) {
     // Don't offer to connect to a connection that's already connected.
     return {connection: null, radius: maxLimit};
@@ -414,10 +417,20 @@ Blockly.Connection.prototype.closest = function(maxLimit, dx, dy) {
   // Determine the opposite type of connection.
   var oppositeType = Blockly.OPPOSITE_TYPE[this.type];
   var db = this.dbList_[oppositeType];
+  var folderdx = 0;
+  var folderdy = 0;
+
+  if (folder) {
+    db = folder.miniworkspace.connectionDBList[oppositeType];
+    var folderOrigin = Blockly.getRelativeXY_(folder.miniworkspace.svgGroup_);
+    var translate_ = folder.miniworkspace.getTranslate();
+    folderdx = folderOrigin.x + parseInt(translate_[0]);
+    folderdy = folderOrigin.y + parseInt(translate_[1]);
+  }
 
   // Since this connection is probably being dragged, add the delta.
-  var currentX = this.x_ + dx;
-  var currentY = this.y_ + dy;
+  var currentX = this.x_ + dx - folderdx;
+  var currentY = this.y_ + dy - folderdy;
 
   // Binary search to find the closest y location.
   var pointerMin = 0;

@@ -32,6 +32,7 @@
 goog.provide('Blockly');
 
 goog.require('Blockly.Instrument'); // lyn's instrumentation code
+goog.require('Blockly.Folder'); // shirley's folder code
 
 // Blockly core dependencies.
 goog.require('Blockly.Block');
@@ -201,6 +202,12 @@ Blockly.workspace_arranged_type = null;
  * @type {Blockly.Block}
  */
 Blockly.selected = null;
+
+/**
+ * Currently selected folder.
+ *
+ */
+Blockly.selectedFolder_ = null;
 
 /**
  * Is Blockly in a read-only, non-editable mode?
